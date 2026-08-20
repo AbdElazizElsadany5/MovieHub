@@ -218,6 +218,3 @@ cd Frontend
 npm install
 npm start
 ```
-#   M o v i e H u b 
- 
- 
