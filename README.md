@@ -13,7 +13,7 @@
 | 3 | Frontend 3 | Admin Dashboard + User Profile + Guards |
 | 4 | Backend 1 | Auth APIs + User Model + JWT |
 | 5 | Backend 2 | Movie APIs + CRUD + Search/Filter/Sort |
-| 6 | Backend 3 | Favorites + Reviews + Ratings APIs |
+| 6 | Backend 3 | Favorites APIs |
 
 ---
 
@@ -64,16 +64,20 @@ MovieHub/
 │           │   ├── dashboard/         ← Admin Dashboard (Stats)
 │           │   │   ├── dashboard.component.ts
 │           │   │   └── dashboard.component.html
-│           │   └── movies/
-│           │       ├── movie-list/    ← List all movies with actions
-│           │       │   ├── movie-list.component.ts
-│           │       │   └── movie-list.component.html
-│           │       ├── add-movie/     ← Add new movie form
-│           │       │   ├── add-movie.component.ts
-│           │       │   └── add-movie.component.html
-│           │       └── edit-movie/    ← Edit existing movie form
-│           │           ├── edit-movie.component.ts
-│           │           └── edit-movie.component.html
+│           │   ├── movies/
+│           │   │   ├── movie-list/    ← List all movies with actions
+│           │   │   │   ├── movie-list.component.ts
+│           │   │   │   └── movie-list.component.html
+│           │   │   ├── add-movie/     ← Add new movie form
+│           │   │   │   ├── add-movie.component.ts
+│           │   │   │   └── add-movie.component.html
+│           │   │   └── edit-movie/    ← Edit existing movie form
+│           │   │       ├── edit-movie.component.ts
+│           │   │       └── edit-movie.component.html
+│           │   └── users/             ← Users Management (Admin only)
+│           │       └── user-list/     ← View registered users
+│           │           ├── user-list.component.ts
+│           │           └── user-list.component.html
 │           ├── services/              ← Angular Services (API calls)
 │           │   ├── auth.service.ts    ← Login + Register + JWT + User state
 │           │   ├── movie.service.ts   ← Fetch movies from API
@@ -125,6 +129,7 @@ MovieHub/
 ## 🔌 API Endpoints
 
 ### Auth — `Backend 1`
+
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/api/auth/register` | Create new user account |
@@ -132,6 +137,7 @@ MovieHub/
 | GET | `/api/auth/me` | Get current logged-in user |
 
 ### Movies — `Backend 2`
+
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/movies` | Get all movies (search, filter, sort, paginate) |
@@ -141,8 +147,9 @@ MovieHub/
 | DELETE | `/api/movies/:id` | Delete movie (Admin only) |
 
 ### Favorites — `Backend 3`
+
 | Method | Endpoint | Description |
-|--------|----------|--------------|
+|--------|----------|-------------|
 | GET | `/api/favorites` | Get user's favorites |
 | POST | `/api/favorites` | Add movie to favorites |
 | DELETE | `/api/favorites/:id` | Remove movie from favorites |
@@ -157,6 +164,7 @@ MovieHub/
 |------------|-------------|
 | `users` | Stores user accounts (name, email, hashed password, role) |
 | `movies` | Stores movie data (title, poster, genre, rating, cast...) |
+| `favorites` | Stores user favorites (user reference + movie reference) |
 
 ---
 
@@ -165,7 +173,7 @@ MovieHub/
 | Role | Accessible Pages |
 |------|-----------------|
 | `user` | Home, Movies, Movie Details, Favorites, Profile |
-| `admin` | All user pages + Admin Dashboard + Movie Management |
+| `admin` | All user pages + Admin Dashboard + Movie Management + Users List |
 
 ---
 
@@ -197,6 +205,7 @@ MovieHub/
 ## 🚀 Getting Started
 
 ### Backend
+
 ```bash
 cd Backend
 npm install
@@ -205,6 +214,7 @@ npm run dev
 ```
 
 ### Frontend
+
 ```bash
 cd Frontend
 npm install
