@@ -89,8 +89,7 @@ MovieHub/
 │   │   ├── auth.controller.js         ← register, login, getMe
 │   │   ├── user.controller.js         ← getProfile, updateProfile
 │   │   ├── movie.controller.js        ← CRUD operations for movies
-│   │   ├── favorite.controller.js     ← Add/Remove/Get favorites
-│   │   └── review.controller.js       ← Add/Edit/Delete reviews
+│   │   └── favorite.controller.js     ← Add/Remove/Get favorites
 │   ├── middlewares/
 │   │   ├── auth.js                    ← Verify JWT token (protect routes)
 │   │   ├── globalError.js             ← Global error handler middleware
@@ -98,14 +97,12 @@ MovieHub/
 │   ├── models/
 │   │   ├── user.model.js              ← User schema (name, email, password, role)
 │   │   ├── movie.model.js             ← Movie schema (title, poster, genre, rating...)
-│   │   ├── favorite.model.js          ← Favorite schema (user, movie)
-│   │   └── review.model.js            ← Review schema (user, movie, rating, comment)
+│   │   └── favorite.model.js          ← Favorite schema (user, movie)
 │   ├── routes/
 │   │   ├── auth.route.js              ← POST /api/auth/register, /login, GET /me
 │   │   ├── user.route.js              ← GET/PUT /api/users/profile
 │   │   ├── movie.route.js             ← GET/POST/PUT/DELETE /api/movies
-│   │   ├── favorite.route.js          ← GET/POST/DELETE /api/favorites
-│   │   └── review.route.js            ← GET/POST/PUT/DELETE /api/reviews
+│   │   └── favorite.route.js          ← GET/POST/DELETE /api/favorites
 │   ├── utils/
 │   │   ├── AppError.js                ← Custom operational error class
 │   │   ├── catchAsync.js              ← Async error wrapper for controllers
@@ -143,16 +140,12 @@ MovieHub/
 | PUT | `/api/movies/:id` | Update movie (Admin only) |
 | DELETE | `/api/movies/:id` | Delete movie (Admin only) |
 
-### Favorites & Reviews — `Backend 3`
+### Favorites — `Backend 3`
 | Method | Endpoint | Description |
-|--------|----------|-------------|
+|--------|----------|--------------|
 | GET | `/api/favorites` | Get user's favorites |
 | POST | `/api/favorites` | Add movie to favorites |
 | DELETE | `/api/favorites/:id` | Remove movie from favorites |
-| GET | `/api/reviews/:movieId` | Get reviews for a movie |
-| POST | `/api/reviews` | Add a review |
-| PUT | `/api/reviews/:id` | Edit a review |
-| DELETE | `/api/reviews/:id` | Delete a review |
 
 ---
 
@@ -164,7 +157,6 @@ MovieHub/
 |------------|-------------|
 | `users` | Stores user accounts (name, email, hashed password, role) |
 | `movies` | Stores movie data (title, poster, genre, rating, cast...) |
-| `reviews` | Stores user reviews linked to movies |
 
 ---
 
@@ -186,7 +178,7 @@ MovieHub/
 | `frontend-admin-profile` | Frontend 3 |
 | `backend-auth-users` | Backend 1 |
 | `backend-movies` | Backend 2 |
-| `backend-favorites-reviews` | Backend 3 |
+| `backend-favorites` | Backend 3 |
 
 ---
 
@@ -217,4 +209,5 @@ npm run dev
 cd Frontend
 npm install
 npm start
-```
+```#   M o v i e H u b  
+ 
