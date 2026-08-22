@@ -5,7 +5,6 @@ const User = require("../models/user.model");
 const auth = async (req, res, next) => {
 
     try {
-
         if (!req.headers.authorization) {
             return next(new AppError(401, "Please login first"));
         }
@@ -15,7 +14,7 @@ const auth = async (req, res, next) => {
             process.env.JWT_SECRET
         );
         const user = await User.findOne({
-            isDeleted: false,
+            isDeleted: { $ne: true },
             _id: decode.id
         }).select("+role");
         if (!user) {
