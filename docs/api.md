@@ -2,8 +2,78 @@
 **Base URL:** `/api`  
 **Response Format:** JSON  
 **Auth Method:** Bearer JWT Token (`Authorization: Bearer <token>`)
+
+---
+
+## 📋 ملخص سريع لكل الـ APIs
+
+### 🔐 1. Authentication — `/api/auth`
+> مسؤول: **Backend 1** & **Frontend 2**
+
+| Method | Endpoint | Access | الوصف |
+|--------|----------|--------|-------|
+| `POST` | `/api/auth/register` | Public | تسجيل مستخدم جديد وإرجاع JWT token |
+| `POST` | `/api/auth/login` | Public | تسجيل دخول وإرجاع JWT token |
+| `GET` | `/api/auth/me` | Private | جلب بيانات المستخدم الحالي من التوكن |
+
+---
+
+### 🎬 2. Movies — `/api/movies`
+> مسؤول: **Backend 2** & **Frontend 1, 3**
+
+| Method | Endpoint | Access | الوصف |
+|--------|----------|--------|-------|
+| `GET` | `/api/movies` | Public | جلب كل الأفلام مع فلترة وبحث وتقسيم صفحات |
+| `GET` | `/api/movies/:id` | Public | جلب تفاصيل فيلم معين |
+| `POST` | `/api/movies` | Admin | إضافة فيلم جديد |
+| `PUT` | `/api/movies/:id` | Admin | تعديل بيانات فيلم |
+| `DELETE` | `/api/movies/:id` | Admin | حذف فيلم |
+
+---
+
+### ❤️ 3. Favorites — `/api/favorites`
+> مسؤول: **Backend 3** & **Frontend 1**
+
+| Method | Endpoint | Access | الوصف |
+|--------|----------|--------|-------|
+| `GET` | `/api/favorites` | Private | جلب قائمة المفضلة للمستخدم |
+| `POST` | `/api/favorites` | Private | إضافة فيلم للمفضلة |
+| `DELETE` | `/api/favorites/:movieId` | Private | حذف فيلم من المفضلة |
+
+---
+
+### ⭐ 4. Reviews — `/api/reviews`
+> مسؤول: **Backend 3** & **Frontend 2**
+
+| Method | Endpoint | Access | الوصف |
+|--------|----------|--------|-------|
+| `GET` | `/api/reviews/:movieId` | Public | جلب كل التقييمات لفيلم معين |
+| `POST` | `/api/reviews` | Private | إضافة تقييم جديد لفيلم |
+| `DELETE` | `/api/reviews/:id` | Private / Admin | حذف تقييم |
+
+---
+
+### 👤 5. Users — `/api/users`
+> مسؤول: **Backend 1** & **Frontend 3**
+
+| Method | Endpoint | Access | الوصف |
+|--------|----------|--------|-------|
+| `PATCH` | `/api/users/updateprofile` | Private | تعديل اسم وإيميل المستخدم |
+| `PATCH` | `/api/users/changepassword` | Private | تغيير كلمة المرور |
+| `DELETE` | `/api/users/deleteprofile` | Private | حذف حساب المستخدم |
+| `PATCH` | `/api/users/updateimage` | Private | رفع وتغيير صورة البروفايل |
+| `GET` | `/api/users/getAllUsers` | Admin | جلب كل المستخدمين |
+| `GET` | `/api/users/getUserById` | Admin | جلب مستخدم معين بالـ ID |
+| `DELETE` | `/api/users/deleteUserByAdmin` | Admin | حذف مستخدم بواسطة الأدمن |
+| `PATCH` | `/api/users/updateUserStatus` | Admin | تفعيل أو تعطيل حساب مستخدم |
+
+---
+
+## 📖 التوثيق التفصيلي
+
 ---
 ## 1. Authentication APIs (`/api/auth`)
+
 > مسؤول عنها: **Backend 1** & **Frontend 2**
 ### 1.1 Register User
 - **Method:** `POST`
@@ -243,3 +313,167 @@
 - **Method:** `DELETE`
 - **Endpoint:** `/api/reviews/:id`
 - **Access:** Private (User / Admin)
+
+---
+
+## 5. User APIs (`/api/users`)
+
+> مسؤول عنها: **Backend 1** & **Frontend 3**
+
+### 5.1 Update Profile
+- **Method:** `PATCH`
+- **Endpoint:** `/api/users/updateprofile`
+- **Access:** Private (User)
+- **Request Body:**
+```json
+{
+  "name": "John Updated",
+  "email": "john_updated@example.com"
+}
+```
+- **Response Success (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d5ec49f1a2c82d88c2e111",
+    "name": "John Updated",
+    "email": "john_updated@example.com",
+    "role": "user"
+  }
+}
+```
+
+### 5.2 Change Password
+- **Method:** `PATCH`
+- **Endpoint:** `/api/users/changepassword`
+- **Access:** Private (User)
+- **Request Body:**
+```json
+{
+  "password": "oldPassword123",
+  "newPassword": "newPassword456"
+}
+```
+- **Response Success (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Password Changed Successfully"
+}
+```
+
+### 5.3 Delete Profile
+- **Method:** `DELETE`
+- **Endpoint:** `/api/users/deleteprofile`
+- **Access:** Private (User)
+- **Response Success (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Profile Deleted Successfully"
+}
+```
+
+### 5.4 Update Profile Image
+- **Method:** `PATCH`
+- **Endpoint:** `/api/users/updateimage`
+- **Access:** Private (User)
+- **Request Body:** `multipart/form-data`
+  - `image` — ملف الصورة (مطلوب)
+- **Response Success (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d5ec49f1a2c82d88c2e111",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "image": "filename.jpg"
+  }
+}
+```
+
+---
+
+### 5.5 Get All Users *(Admin Only)*
+- **Method:** `GET`
+- **Endpoint:** `/api/users/getAllUsers`
+- **Access:** Private (Admin)
+- **Response Success (200 OK):**
+```json
+{
+  "success": true,
+  "results": 2,
+  "data": [
+    {
+      "_id": "60d5ec49f1a2c82d88c2e111",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "role": "user",
+      "isActive": true,
+      "image": "filename.jpg"
+    }
+  ]
+}
+```
+
+### 5.6 Get User By ID *(Admin Only)*
+- **Method:** `GET`
+- **Endpoint:** `/api/users/getUserById`
+- **Access:** Private (Admin)
+- **Query Parameters:**
+  - `id` — ID المستخدم
+- **Response Success (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d5ec49f1a2c82d88c2e111",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "role": "user",
+    "isActive": true,
+    "image": "filename.jpg"
+  }
+}
+```
+
+### 5.7 Delete User By Admin *(Admin Only)*
+- **Method:** `DELETE`
+- **Endpoint:** `/api/users/deleteUserByAdmin`
+- **Access:** Private (Admin)
+- **Query Parameters:**
+  - `id` — ID المستخدم المراد حذفه
+- **Response Success (200 OK):**
+```json
+{
+  "success": true,
+  "message": "User Deleted Successfully"
+}
+```
+
+### 5.8 Update User Status *(Admin Only)*
+- **Method:** `PATCH`
+- **Endpoint:** `/api/users/updateUserStatus`
+- **Access:** Private (Admin)
+- **Query Parameters:**
+  - `id` — ID المستخدم
+- **Request Body:**
+```json
+{
+  "isActive": false
+}
+```
+- **Response Success (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d5ec49f1a2c82d88c2e111",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "isActive": false
+  }
+}
+```
