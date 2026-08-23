@@ -1,1 +1,95 @@
+const Movie = require("../models/movie.model");
+const catchAsync = require("../utils/catchAsync");
+const ApiFeatures = require("../utils/ApiFeatures");
+const AppError = require("../utils/AppError");
+
+// Add a new movie
+const addMovie = catchAsync(async (req, res, next) => {
+    const movie = await Movie.create({
+        ...req.body,
+        createdBy: req.user._id
+    });
+    
+    res.status(201).json({
+        status: "success",
+        data: {
+            movie
+        }
+    });
+});
+
+// Get all movies
+const getAllMovies = catchAsync(async (req, res, next) => {
+    const features = new ApiFeatures(Movie.find(), req.query)
+        .filter()
+        .search()
+        .fields()
+        .sort()
+        .pagination();
+
+    const movies = await features.query
+        .populate("createdBy", "name -_id");
+
+
+    res.status(200).json({
+        status: "success",
+        results: movies.length,
+        data: {
+            movies
+        }
+    });
+});
+
+// Get single movie
+const getMovie = catchAsync(async (req, res, next) => {
+
+    const movie = await Movie.findById(req.params.id)
+        .populate("createdBy", "name -_id");
  
+        if (!movie) {
+    return next(new AppError(404, "Movie not found"));
+}
+
+    res.status(200).json({
+        status: "success",
+        data: {
+            movie
+        }
+    });
+});
+
+// Update movie
+const updateMovie = catchAsync(async (req, res, next) => {
+
+    const movie = await Movie.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        {
+            returnDocument: "after",
+            runValidators: true
+        }
+    );
+
+    res.status(200).json({
+        status: "success",
+        data: {
+            movie
+        }
+    });
+});
+
+// Delete movie
+const deleteMovie = catchAsync(async (req, res, next) => {
+
+    await Movie.findByIdAndDelete(req.params.id);
+
+    res.status(204).send();
+});
+
+module.exports = {
+    addMovie,
+    getAllMovies,
+    getMovie,
+    updateMovie,
+    deleteMovie
+};
