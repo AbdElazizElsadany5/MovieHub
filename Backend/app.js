@@ -17,6 +17,10 @@ if (process.env.NODE_ENV === 'development' || true) {
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'success', message: 'MovieHub API Server is running smoothly!' });
 });
+app.get('/', (req, res) => {
+  res.send('Welcome to MovieHub API');
+});
+app.get('/favicon.ico', (req, res) => res.status(204).end());
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/movies', movieRoutes);
