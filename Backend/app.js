@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const morgan = require('morgan');
 require('dotenv').config();
 const authRoutes = require('./routes/auth.route');
@@ -10,6 +11,7 @@ const globalError = require('./middlewares/globalError');
 const AppError = require('./utils/AppError');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 if (process.env.NODE_ENV === 'development' || true) {
   app.use(morgan('dev'));

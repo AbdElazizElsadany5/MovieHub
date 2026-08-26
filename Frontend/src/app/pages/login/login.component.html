@@ -1,1 +1,12 @@
  
+<section class="mx-auto flex min-h-[70vh] max-w-md items-center px-6 py-14">
+  <form class="w-full rounded-2xl border border-white/10 bg-[#18181f] p-7" (ngSubmit)="login()">
+    <h1 class="font-display text-4xl tracking-wide">SIGN IN</h1>
+    <p class="mt-2 text-gray-400">Access your favorites and account.</p>
+    @if (errorMessage) { <p class="mt-5 rounded-lg bg-red-950/50 px-4 py-3 text-sm text-red-300">{{ errorMessage }}</p> }
+    <label class="mt-6 block text-sm text-gray-300">Email<input [(ngModel)]="email" name="email" type="email" required class="mt-2 w-full rounded-xl border border-white/10 bg-[#0d0d10] px-4 py-3 outline-none focus:border-red-600" /></label>
+    <label class="mt-5 block text-sm text-gray-300">Password<input [(ngModel)]="password" name="password" type="password" required class="mt-2 w-full rounded-xl border border-white/10 bg-[#0d0d10] px-4 py-3 outline-none focus:border-red-600" /></label>
+    <button [disabled]="loading" class="mt-7 w-full rounded-xl bg-red-600 px-5 py-3 font-semibold hover:bg-red-700 disabled:opacity-60">{{ loading ? 'Signing in…' : 'Sign In' }}</button>
+    <p class="mt-5 text-center text-sm text-gray-400">New here? <a routerLink="/register" class="text-red-400 hover:text-red-300">Create an account</a></p>
+  </form>
+</section>

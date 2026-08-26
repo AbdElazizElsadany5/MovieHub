@@ -1,5 +1,5 @@
- import { Component, Input } from '@angular/core';
-import { Movie } from '../../services/movie.service';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { Movie } from '../../models/movie.model';
 import { FavoriteService } from '../../services/favorite.service';
 
 @Component({
@@ -10,14 +10,19 @@ import { FavoriteService } from '../../services/favorite.service';
 export class MovieCardComponent {
   @Input({ required: true }) movie!: Movie;
 
-  constructor(private favoriteService: FavoriteService) {}
+  constructor(
+    private readonly favoriteService: FavoriteService,
+    private readonly cdr: ChangeDetectorRef
+  ) {}
 
   isFavorite(): boolean {
     return this.favoriteService.isFavorite(this.movie._id);
   }
 
   toggleFavorite(): void {
-    this.favoriteService.toggleFavorite(this.movie);
+    this.favoriteService.toggleFavorite(this.movie).subscribe({
+      next: () => this.cdr.markForCheck(),
+      error: (error) => console.error('Could not update favorite:', error)
+    });
   }
 }
- 

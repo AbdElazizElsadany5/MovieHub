@@ -44,11 +44,22 @@
       </a>
     </div>
 
-    <div class="hidden items-center gap-7 md:flex">
-      <span class="text-gray-400">Admin</span>
-      <button class="rounded-xl bg-red-600 px-6 py-3 font-semibold hover:bg-red-700">
-        Sign In
-      </button>
+    <!-- Account controls: regular users see an avatar; admins also see their dashboard link. -->
+    <div class="hidden items-center gap-5 md:flex">
+      @if (user$ | async; as user) {
+        @if (user.role === 'admin') {
+          <a routerLink="/admin" class="text-gray-400 transition hover:text-white">Admin</a>
+        }
+        <a routerLink="/profile" class="block h-11 w-11 overflow-hidden rounded-full border-2 border-white/20 bg-red-950 font-semibold text-white transition-all duration-300 hover:scale-105 hover:border-red-600 hover:shadow-lg hover:shadow-red-600/30" [attr.aria-label]="user.name">
+          @if (user.image) {
+            <img [src]="user.image" [alt]="user.name" class="h-full w-full object-cover" />
+          } @else {
+            <img [src]="defaultAvatar" [alt]="user.name" class="h-full w-full object-cover" />
+          }
+        </a>
+      } @else {
+        <a routerLink="/login" class="rounded-xl bg-red-600 px-6 py-3 font-semibold hover:bg-red-700">Sign In</a>
+      }
     </div>
   </nav>
 </header>
