@@ -1,1 +1,278 @@
- 
+<div class="min-h-screen bg-[#0f0f13] text-white">
+  <app-navbar></app-navbar>
+
+  @if (isLoadingMovie()) {
+    <div class="min-h-[70vh] flex flex-col items-center justify-center gap-4">
+      <div class="w-12 h-12 border-4 border-[#E50914] border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-neutral-400 text-sm animate-pulse">Loading movie details...</p>
+    </div>
+  }
+
+  @if (!isLoadingMovie() && movieError()) {
+    <div class="min-h-[60vh] flex flex-col items-center justify-center text-center p-6">
+      <div class="w-16 h-16 rounded-full bg-red-950/80 border border-red-800 text-red-400 flex items-center justify-center text-2xl mb-4">
+        ⚠️
+      </div>
+      <h2 class="text-2xl font-bold text-white uppercase tracking-wide">Movie Not Found</h2>
+      <p class="text-neutral-400 max-w-md mt-2 mb-6">{{ movieError() }}</p>
+      <a routerLink="/" class="px-6 py-3 bg-[#E50914] hover:bg-[#b80710] text-white font-bold rounded-xl transition-all">
+        Back to Home
+      </a>
+    </div>
+  }
+
+  @if (!isLoadingMovie() && movie()) {
+    <div>
+      
+      <div class="relative h-[70vh] min-h-[500px] max-h-[700px] overflow-hidden">
+        <img
+          [src]="movie()?.backdrop || movie()?.poster"
+          [alt]="movie()?.title"
+          class="absolute inset-0 w-full h-full object-cover"
+        />
+        <div class="absolute inset-0 bg-gradient-to-r from-[#0f0f13] via-[#0f0f13]/60 to-[#0f0f13]/20"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0f0f13] via-[#0f0f13]/30 to-transparent"></div>
+
+        <div class="relative h-full max-w-7xl mx-auto px-6 flex items-end pb-12">
+          <div class="flex flex-col sm:flex-row gap-8 items-start sm:items-end w-full">
+            
+            <div class="flex-none w-40 rounded-xl overflow-hidden hidden sm:block shadow-[0_0_40px_rgba(0,0,0,0.7)] border border-white/10 -mb-10">
+              <img
+                [src]="movie()?.poster"
+                [alt]="movie()?.title"
+                class="w-full h-full object-cover"
+              />
+            </div>
+
+            <div class="pb-2">
+              <div class="flex flex-wrap gap-2 mb-3">
+                @for (genre of movie()?.genres; track genre) {
+                  <span class="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-[#E50914]/15 text-[#E50914] border border-[#E50914]/25">
+                    {{ genre }}
+                  </span>
+                }
+              </div>
+
+              <h1 class="font-display text-4xl sm:text-6xl lg:text-7xl font-extrabold uppercase tracking-wide leading-none mb-3 text-white">
+                {{ movie()?.title }}
+              </h1>
+
+              <div class="flex items-center gap-4 text-sm">
+                <span class="flex items-center gap-1.5 font-bold text-[#FFB800]">
+                  ★ {{ movie()?.rating | number:'1.1-1' }} / 10
+                </span>
+                <span class="text-neutral-400">•</span>
+                <span class="text-neutral-400">{{ movie()?.releaseYear }}</span>
+                <span class="text-neutral-400">•</span>
+                <span class="text-neutral-400">{{ formatDuration(movie()?.duration) }}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-6 pb-20 sm:pt-12">
+        <div class="grid lg:grid-cols-3 gap-10">
+          
+          <div class="lg:col-span-2 space-y-8">
+            
+            <div>
+              <h2 class="font-display text-xl font-bold uppercase tracking-widest text-neutral-400 mb-3">Overview</h2>
+              <p class="text-white/80 leading-relaxed text-base">
+                {{ movie()?.overview }}
+              </p>
+            </div>
+
+            @if (movie()?.cast && movie()!.cast!.length > 0) {
+              <div>
+                <h2 class="font-display text-xl font-bold uppercase tracking-widest text-neutral-400 mb-4">Cast</h2>
+                <div class="flex flex-wrap gap-3">
+                  @for (actor of movie()?.cast; track actor) {
+                    <div class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5">
+                      <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-none bg-[#E50914]/20 text-[#E50914]">
+                        {{ actor[0] }}
+                      </div>
+                      <span class="text-sm font-medium text-white/90">{{ actor }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <div class="flex flex-wrap gap-4 pt-2">
+              @if (movie()?.trailerUrl) {
+                <button
+                  (click)="openTrailer()"
+                  class="flex items-center gap-3 px-8 py-3.5 rounded-xl text-sm font-bold bg-[#E50914] hover:bg-[#b80710] text-white transition-all duration-200 hover:scale-105 shadow-[0_0_30px_rgba(229,9,20,0.3)] cursor-pointer"
+                >
+                  <span>▶</span>
+                  <span>Watch Trailer</span>
+                </button>
+              }
+
+              <a
+                routerLink="/"
+                class="px-8 py-3.5 rounded-xl text-sm font-bold bg-white/5 border border-white/10 text-neutral-400 hover:text-white hover:bg-white/10 transition-all duration-200"
+              >
+                ← Back to Catalog
+              </a>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
+              <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                <h2 class="font-display text-xl font-bold uppercase tracking-widest text-white flex items-center gap-2">
+                  <span>💬</span>
+                  <span>User Reviews</span>
+                </h2>
+                <span class="px-3 py-1 rounded-full bg-white/10 text-neutral-300 text-xs font-semibold">
+                  {{ reviews().length }} {{ reviews().length === 1 ? 'Review' : 'Reviews' }}
+                </span>
+              </div>
+
+              @if (authService.isLoggedIn()) {
+                <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="space-y-4">
+                  <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2">Rating</label>
+                    <div class="flex items-center gap-2">
+                      @for (star of [1, 2, 3, 4, 5]; track star) {
+                        <button
+                          type="button"
+                          (click)="setRating(star)"
+                          class="text-2xl transition-transform hover:scale-125 focus:outline-none cursor-pointer"
+                          [ngClass]="{ 'text-[#FFB800]': star <= selectedRating(), 'text-neutral-700': star > selectedRating() }"
+                        >
+                          ★
+                        </button>
+                      }
+                      <span class="text-sm font-bold text-[#FFB800] ml-2">{{ selectedRating() }} / 5</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label for="comment" class="block text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2">Your Review</label>
+                    <textarea
+                      id="comment"
+                      formControlName="comment"
+                      rows="3"
+                      placeholder="Share your thoughts about this movie..."
+                      class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-neutral-500 focus:outline-none focus:border-white/25 transition-colors"
+                    ></textarea>
+                  </div>
+
+                  <button
+                    type="submit"
+                    [disabled]="isSubmittingReview()"
+                    class="px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-[#E50914] hover:bg-[#b80710] text-white transition-all shadow-[0_0_20px_rgba(229,9,20,0.25)] cursor-pointer disabled:opacity-50"
+                  >
+                    Submit Review
+                  </button>
+                </form>
+              } @else {
+                <div class="text-center py-4 space-y-3">
+                  <p class="text-neutral-300 text-sm">Log in to write a review for {{ movie()?.title }}.</p>
+                  <a
+                    [routerLink]="['/login']"
+                    [queryParams]="{ returnUrl: '/movie/' + movieId() }"
+                    class="inline-block px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-[#E50914] hover:bg-[#b80710] text-white transition-all shadow-md"
+                  >
+                    Sign In to Review
+                  </a>
+                </div>
+              }
+
+              <div class="space-y-3">
+                @for (review of reviews(); track review._id) {
+                  <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-[#E50914] text-white font-bold text-xs flex items-center justify-center">
+                          {{ getReviewerName(review).charAt(0).toUpperCase() }}
+                        </div>
+                        <div>
+                          <h4 class="font-bold text-white text-sm">{{ getReviewerName(review) }}</h4>
+                          <div class="flex text-[#FFB800] text-xs">
+                            @for (star of [1,2,3,4,5]; track star) {
+                              <span>{{ star <= review.rating ? '★' : '☆' }}</span>
+                            }
+                          </div>
+                        </div>
+                      </div>
+                      @if (canDeleteReview(review)) {
+                        <button (click)="deleteReview(review._id)" class="text-xs text-neutral-500 hover:text-red-400">Delete</button>
+                      }
+                    </div>
+                    <p class="text-neutral-300 text-sm pl-11">{{ review.comment }}</p>
+                  </div>
+                }
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="space-y-4">
+            
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-4">
+              <h3 class="font-display text-lg font-bold uppercase tracking-widest text-neutral-400">Details</h3>
+              
+              <div class="flex justify-between items-start gap-4">
+                <span class="text-neutral-400 text-sm flex-none">Release Date</span>
+                <span class="text-white text-sm text-right font-medium">{{ movie()?.releaseYear }}</span>
+              </div>
+
+              <div class="flex justify-between items-start gap-4">
+                <span class="text-neutral-400 text-sm flex-none">Genres</span>
+                <span class="text-white text-sm text-right font-medium">{{ movie()?.genres?.join(', ') }}</span>
+              </div>
+
+              <div class="flex justify-between items-start gap-4">
+                <span class="text-neutral-400 text-sm flex-none">Rating</span>
+                <span class="text-white text-sm text-right font-medium">★ {{ movie()?.rating | number:'1.1-1' }} / 10</span>
+              </div>
+
+              <div class="flex justify-between items-start gap-4">
+                <span class="text-neutral-400 text-sm flex-none">Cast Size</span>
+                <span class="text-white text-sm text-right font-medium">{{ movie()?.cast?.length || 0 }} principal cast</span>
+              </div>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-5">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-neutral-400 text-sm font-medium">Audience Score</span>
+                <span class="font-display text-3xl font-extrabold text-[#FFB800]">{{ movie()?.rating | number:'1.1-1' }}</span>
+              </div>
+              <div class="h-2 rounded-full bg-white/10 overflow-hidden">
+                <div
+                  class="h-full rounded-full bg-gradient-to-r from-[#FFB800] to-orange-400 transition-all duration-1000"
+                  [style.width.%]="(movie()?.rating || 0) * 10"
+                ></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-neutral-500 mt-1">
+                <span>0</span>
+                <span>10</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <app-similar-movies
+          [currentMovieId]="movieId()"
+          [genres]="movie()?.genres || []"
+        ></app-similar-movies>
+
+      </div>
+    </div>
+  }
+
+  <app-trailer-modal
+    [isOpen]="showTrailerModal()"
+    [trailerUrl]="movie()?.trailerUrl"
+    [movieTitle]="movie()?.title || 'Movie Trailer'"
+    (close)="closeTrailer()"
+  ></app-trailer-modal>
+
+  <app-footer></app-footer>
+</div>
