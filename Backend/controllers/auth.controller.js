@@ -22,7 +22,6 @@ exports.signup = catchAsync(async (req, res, next) => {
     })
     user.password = undefined
     user.confirmPassword = undefined
-    user.role = undefined
     user.isDeleted = undefined
     res.status(200).json({
         success: true,
@@ -50,7 +49,7 @@ exports.me = catchAsync(async (req, res, next) => {
     const user = await User.findOne({
         _id: req.user._id,
         isDeleted: { $ne: true }
-    }).select("-password -confirmPassword -role -isDeleted");
+    }).select("-password -confirmPassword -isDeleted");
 
     if (!user) {
         return next(new AppError(404, "User Not Found"));
