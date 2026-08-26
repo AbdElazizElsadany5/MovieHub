@@ -1,1 +1,213 @@
- 
+
+@if (heroMovie) {
+
+  <!-- HERO -->
+  <section class="relative min-h-[650px] overflow-hidden bg-[#0d0d10] text-white">
+
+    <!-- Background Image -->
+    <img
+      [src]="heroMovie.poster"
+      [alt]="heroMovie.title"
+      class="absolute inset-0 h-full w-full object-cover"
+    />
+
+    <!-- Dark Overlay -->
+    <div class="absolute inset-0 bg-black/60"></div>
+
+    <!-- Content -->
+    <div
+      class="relative z-10 mx-auto flex min-h-[650px] max-w-[1500px] items-end px-6 pb-20 lg:px-8"
+    >
+      <div class="max-w-2xl">
+
+        <!-- Genres + Year -->
+        <div class="mb-6 flex flex-wrap gap-3">
+
+          @for (genre of heroMovie.genres; track genre) {
+            <span
+              class="rounded-full border border-red-600/40 bg-red-950/60 px-4 py-1 text-sm text-red-400"
+            >
+              {{ genre }}
+            </span>
+          }
+
+          <span class="py-1 text-gray-300">
+            {{ heroMovie.releaseYear }}
+          </span>
+
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-6xl font-semibold sm:text-8xl">
+          {{ heroMovie.title }}
+        </h1>
+
+        <!-- Rating + Cast -->
+        <div class="mt-5 flex flex-wrap items-center gap-4">
+
+          <span
+            class="rounded-lg bg-amber-500/20 px-4 py-2 font-semibold text-amber-400"
+          >
+            ★ {{ heroMovie.rating }}
+          </span>
+
+          <span class="text-gray-300">
+            {{ heroMovie.cast?.join(' · ') }}
+          </span>
+
+        </div>
+
+        <!-- Overview -->
+        <p class="mt-6 max-w-xl leading-7 text-gray-300">
+          {{ heroMovie.overview }}
+        </p>
+
+        <!-- Buttons -->
+        <div class="mt-9 flex flex-wrap gap-4">
+
+          <button
+            class="rounded-2xl bg-red-600 px-7 py-4 font-semibold hover:bg-red-700"
+          >
+            ▶ Play Trailer
+          </button>
+
+          <a
+            routerLink="/movies"
+            class="rounded-2xl border border-white/20 bg-white/10 px-7 py-4 font-semibold hover:bg-white/20"
+          >
+            More Info
+          </a>
+
+        </div>
+
+      </div>
+    </div>
+
+    @if (heroMovies.length > 1) {
+      <div class="absolute bottom-7 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3">
+        @for (movie of heroMovies; track movie._id; let index = $index) {
+          <button
+            type="button"
+            (click)="goToSlide(index)"
+            [attr.aria-label]="'Show slide ' + (index + 1)"
+            [class.bg-red-600]="currentHeroIndex === index"
+            [class.w-8]="currentHeroIndex === index"
+            [class.bg-white/50]="currentHeroIndex !== index"
+            class="h-2 rounded-full transition-all hover:bg-white"
+          ></button>
+        }
+      </div>
+      <div class="absolute bottom-6 right-6 z-20 flex gap-3 lg:right-8">
+        <button type="button" (click)="previousSlide()" aria-label="Previous slide" class="grid h-11 w-11 place-items-center rounded-full bg-black/50 text-xl hover:bg-red-600">‹</button>
+        <button type="button" (click)="nextSlide()" aria-label="Next slide" class="grid h-11 w-11 place-items-center rounded-full bg-black/50 text-xl hover:bg-red-600">›</button>
+      </div>
+    }
+
+  </section>
+}
+
+<!-- MOVIES -->
+<section class="mx-auto max-w-[1500px] space-y-18 px-6 py-16 lg:px-8">
+
+  <!-- FEATURED -->
+  <div>
+
+    <div class="mb-7 flex items-end gap-4">
+      <h2 class="text-4xl tracking-wide">
+        FEATURED
+      </h2>
+
+      <span class="pb-1 text-gray-400">
+        Handpicked Picks
+      </span>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+
+      @for (movie of featuredMovies; track movie._id) {
+        <app-movie-card [movie]="movie" />
+      }
+
+    </div>
+
+  </div>
+
+
+  <!-- LATEST RELEASES -->
+  <div>
+
+    <div class="mb-7 flex items-end gap-4">
+      <h2 class="text-4xl tracking-wide">
+        LATEST RELEASES
+      </h2>
+
+      <span class="pb-1 text-gray-400">
+        New This Month
+      </span>
+    </div>
+
+    <div
+      class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
+    >
+
+      @for (movie of latestMovies; track movie._id) {
+        <app-movie-card [movie]="movie" />
+      }
+
+    </div>
+
+  </div>
+
+
+  <!-- TOP RATED -->
+  <div>
+
+    <div class="mb-7 flex items-end gap-4">
+      <h2 class="text-4xl tracking-wide">
+        TOP RATED
+      </h2>
+
+      <span class="pb-1 text-gray-400">
+        Audience Favorites
+      </span>
+    </div>
+
+    <div
+      class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
+    >
+
+      @for (movie of topRatedMovies; track movie._id) {
+        <app-movie-card [movie]="movie" />
+      }
+
+    </div>
+
+  </div>
+
+
+  <!-- BROWSE BY GENRE -->
+  <div>
+
+    <h2 class="mb-7 text-4xl tracking-wide">
+      BROWSE BY GENRE
+    </h2>
+
+    <div class="grid grid-cols-2 gap-4 md:grid-cols-5">
+
+      @for (genre of genres; track genre) {
+
+        <a
+          [routerLink]="['/movies']"
+          [queryParams]="{ genre: genre }"
+          class="rounded-2xl border border-white/10 bg-gradient-to-br from-red-950 to-[#1a1012] px-5 py-10 text-center text-2xl tracking-widest transition hover:-translate-y-1 hover:border-red-600"
+        >
+          {{ genre }}
+        </a>
+
+      }
+
+    </div>
+
+  </div>
+
+</section>

@@ -1,1 +1,65 @@
- 
+<header class="sticky top-0 z-50 border-b border-white/10 bg-[#16161e]/95 backdrop-blur">
+  <nav class="mx-auto flex h-[72px] max-w-[1500px] items-center justify-between px-6 lg:px-8">
+    <a routerLink="/home" class="font-display text-3xl tracking-[0.12em] text-white">
+      <span class="text-red-600">MOVIE</span> HUB
+    </a>
+
+    <button
+      (click)="menuOpen = !menuOpen"
+      class="text-2xl md:hidden"
+      aria-label="Open menu"
+    >
+      ☰
+    </button>
+
+    <div
+      class="absolute left-0 top-[72px] w-full border-b border-white/10 bg-[#16161e] p-5 md:static md:flex md:w-auto md:items-center md:gap-10 md:border-0 md:bg-transparent md:p-0"
+      [class.hidden]="!menuOpen"
+    >
+      <a
+        routerLink="/home"
+        routerLinkActive="text-white border-red-600"
+        (click)="closeMenu()"
+        class="block border-b-2 border-transparent py-2 text-lg text-gray-400 hover:text-white"
+      >
+        Home
+      </a>
+
+      <a
+        routerLink="/movies"
+        routerLinkActive="text-white border-red-600"
+        (click)="closeMenu()"
+        class="block border-b-2 border-transparent py-2 text-lg text-gray-400 hover:text-white"
+      >
+        Movies
+      </a>
+
+      <a
+        routerLink="/favorites"
+        routerLinkActive="text-white border-red-600"
+        (click)="closeMenu()"
+        class="block border-b-2 border-transparent py-2 text-lg text-gray-400 hover:text-white"
+      >
+        Favorites
+      </a>
+    </div>
+
+    <!-- Account controls: regular users see an avatar; admins also see their dashboard link. -->
+    <div class="hidden items-center gap-5 md:flex">
+      @if (user$ | async; as user) {
+        @if (user.role === 'admin') {
+          <a routerLink="/admin" class="text-gray-400 transition hover:text-white">Admin</a>
+        }
+        <div class="grid h-11 w-11 place-items-center overflow-hidden rounded-full border-2 border-white/20 bg-red-950 font-semibold text-white" [attr.aria-label]="user.name">
+          @if (user.image) {
+            <img [src]="user.image" [alt]="user.name" class="h-full w-full object-cover" />
+          } @else {
+            <img [src]="defaultAvatar" [alt]="user.name" class="h-full w-full object-cover" />
+          }
+        </div>
+      } @else {
+        <a routerLink="/login" class="rounded-xl bg-red-600 px-6 py-3 font-semibold hover:bg-red-700">Sign In</a>
+      }
+    </div>
+  </nav>
+</header>

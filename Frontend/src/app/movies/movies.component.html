@@ -1,1 +1,69 @@
- 
+<section class="mx-auto max-w-[1500px] px-6 py-14 lg:px-8">
+  <div class="mb-10">
+    <h1 class="font-display text-5xl tracking-wide">MOVIES</h1>
+    <p class="mt-2 text-gray-400">Find your next favorite movie.</p>
+  </div>
+
+  <div class="mb-10 grid gap-4 rounded-2xl border border-white/10 bg-[#18181f] p-5 md:grid-cols-3">
+    <input
+      [(ngModel)]="searchText"
+      (input)="applyFilters()"
+      type="search"
+      placeholder="Search movies..."
+      class="rounded-xl border border-white/10 bg-[#0d0d10] px-4 py-3 outline-none placeholder:text-gray-500 focus:border-red-600"
+    />
+
+    <select
+      [(ngModel)]="selectedGenre"
+      (change)="applyFilters()"
+      class="rounded-xl border border-white/10 bg-[#0d0d10] px-4 py-3 outline-none focus:border-red-600"
+    >
+      <option value="">All genres</option>
+      @for (genre of genres; track genre) {
+        <option [value]="genre">{{ genre }}</option>
+      }
+    </select>
+
+    <select
+      [(ngModel)]="selectedSort"
+      (change)="applyFilters()"
+      class="rounded-xl border border-white/10 bg-[#0d0d10] px-4 py-3 outline-none focus:border-red-600"
+    >
+      <option value="latest">Latest releases</option>
+      <option value="rating">Top rated</option>
+      <option value="oldest">Oldest releases</option>
+    </select>
+  </div>
+
+  <p class="mb-6 text-sm text-gray-400">
+    {{ filteredMovies.length }} movies found
+  </p>
+
+  @if (paginatedMovies.length) {
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      @for (movie of paginatedMovies; track movie._id) {
+        <app-movie-card [movie]="movie" />
+      }
+    </div>
+
+    @if (totalPages > 1) {
+      <div class="mt-12 flex justify-center gap-3">
+        @for (page of [].constructor(totalPages); track $index) {
+          <button
+            (click)="changePage($index + 1)"
+            [class.bg-red-600]="currentPage === $index + 1"
+            [class.bg-white/10]="currentPage !== $index + 1"
+            class="grid h-10 w-10 place-items-center rounded-lg hover:bg-red-600"
+          >
+            {{ $index + 1 }}
+          </button>
+        }
+      </div>
+    }
+  } @else {
+    <div class="rounded-2xl border border-dashed border-white/20 py-24 text-center">
+      <p class="text-2xl">No movies found</p>
+      <p class="mt-2 text-gray-400">Try another search or filter.</p>
+    </div>
+  }
+</section>
