@@ -1,43 +1,73 @@
- 
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+
+function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+  const password = control.get('password');
+  const confirmPassword = control.get('confirmPassword');
+  if (password && confirmPassword && password.value !== confirmPassword.value) {
+    return { passwordMismatch: true };
+  }
+  return null;
+}
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './register.component.html'
 })
 export class RegisterComponent {
-  name = '';
-  email = '';
-  password = '';
-  confirmPassword = '';
-  errorMessage = '';
-  loading = false;
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
-  constructor(
-    private readonly authService: AuthService,
-    private readonly router: Router,
-    private readonly cdr: ChangeDetectorRef
-  ) {}
+  registerForm: FormGroup = this.fb.group({
+    name: ['', [Validators.required, Validators.minLength(2)]],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    confirmPassword: ['', [Validators.required]]
+  }, { validators: passwordMatchValidator });
 
-  register(): void {
-    if (this.password !== this.confirmPassword) {
-      this.errorMessage = 'Passwords do not match.';
+  isLoading = signal(false);
+  errorMessage = signal<string | null>(null);
+  showPassword = signal(false);
+  showConfirmPassword = signal(false);
+
+  get f() {
+    return this.registerForm.controls;
+  }
+
+  togglePassword() {
+    this.showPassword.update(v => !v);
+  }
+
+  toggleConfirmPassword() {
+    this.showConfirmPassword.update(v => !v);
+  }
+
+  onSubmit(): void {
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
       return;
     }
 
-    this.loading = true;
-    this.errorMessage = '';
-    this.authService.signup(this.name, this.email, this.password).subscribe({
-      next: () => this.router.navigateByUrl('/login'),
-      error: (error) => {
-        this.errorMessage = error.error?.message ?? 'Could not create the account.';
-        this.loading = false;
-        this.cdr.markForCheck();
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+
+    const { name, email, password } = this.registerForm.value;
+
+    this.authService.register({ name, email, password }).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        const message = err?.error?.message || 'Registration failed. Please try again.';
+        this.errorMessage.set(message);
       }
     });
   }

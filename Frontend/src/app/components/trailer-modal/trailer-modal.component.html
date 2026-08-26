@@ -1,1 +1,35 @@
- 
+@if (isOpen) {
+  <div
+    class="fixed inset-0 z-[200] flex items-center justify-center bg-black/85 backdrop-blur-md p-4"
+    (click)="closeModal()"
+  >
+    <div
+      class="relative w-full max-w-4xl rounded-2xl overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.8)] bg-black"
+      (click)="$event.stopPropagation()"
+    >
+      <button
+        (click)="closeModal()"
+        class="absolute top-3 right-3 z-10 w-9 h-9 rounded-xl bg-black/60 border border-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all cursor-pointer"
+        aria-label="Close trailer"
+      >
+        ✕
+      </button>
+
+      <div class="flex flex-col items-center justify-center gap-5 py-16 px-8 text-center">
+        <p class="text-white/60 text-sm">Watch trailer for <strong class="text-white">{{ movieTitle }}</strong></p>
+        @if (trailerUrl) {
+          <a
+            [href]="trailerUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center gap-3 px-8 py-4 rounded-xl text-sm font-bold bg-[#E50914] hover:bg-[#b80710] text-white transition-all hover:scale-105 shadow-[0_0_30px_rgba(229,9,20,0.4)]"
+          >
+            ▶ Watch on YouTube
+          </a>
+        } @else {
+          <p class="text-neutral-400">Trailer unavailable</p>
+        }
+      </div>
+    </div>
+  </div>
+}

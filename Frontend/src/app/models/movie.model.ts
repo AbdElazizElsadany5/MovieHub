@@ -11,5 +11,19 @@ export interface Movie {
   rating: number;
   numReviews?: number;
   cast?: string[];
-  createdBy?: string | { name: string };
+}
+
+export interface SingleMovieResponse {
+  status: string;
+  data: {
+    movie: Movie;
+  };
+}
+
+export interface MoviesListResponse {
+  status: string;
+  results: number;
+  data: {
+    movies: Movie[];
+  };
 }

@@ -1,12 +1,79 @@
- 
-<section class="mx-auto flex min-h-[70vh] max-w-md items-center px-6 py-14">
-  <form class="w-full rounded-2xl border border-white/10 bg-[#18181f] p-7" (ngSubmit)="login()">
-    <h1 class="font-display text-4xl tracking-wide">SIGN IN</h1>
-    <p class="mt-2 text-gray-400">Access your favorites and account.</p>
-    @if (errorMessage) { <p class="mt-5 rounded-lg bg-red-950/50 px-4 py-3 text-sm text-red-300">{{ errorMessage }}</p> }
-    <label class="mt-6 block text-sm text-gray-300">Email<input [(ngModel)]="email" name="email" type="email" required class="mt-2 w-full rounded-xl border border-white/10 bg-[#0d0d10] px-4 py-3 outline-none focus:border-red-600" /></label>
-    <label class="mt-5 block text-sm text-gray-300">Password<input [(ngModel)]="password" name="password" type="password" required class="mt-2 w-full rounded-xl border border-white/10 bg-[#0d0d10] px-4 py-3 outline-none focus:border-red-600" /></label>
-    <button [disabled]="loading" class="mt-7 w-full rounded-xl bg-red-600 px-5 py-3 font-semibold hover:bg-red-700 disabled:opacity-60">{{ loading ? 'Signing in…' : 'Sign In' }}</button>
-    <p class="mt-5 text-center text-sm text-gray-400">New here? <a routerLink="/register" class="text-red-400 hover:text-red-300">Create an account</a></p>
-  </form>
-</section>
+<div class="min-h-screen bg-[#0f0f13] flex items-center justify-center px-6 py-20">
+  <div class="w-full max-w-md">
+    
+    <div class="text-center mb-10">
+      <a routerLink="/" class="inline-flex items-center gap-1 cursor-pointer">
+        <span class="font-display text-4xl font-extrabold tracking-widest uppercase text-[#E50914]">Movie</span>
+        <span class="font-display text-4xl font-extrabold tracking-widest uppercase text-white">Hub</span>
+      </a>
+      <p class="text-neutral-400 text-sm mt-2">Your cinema, curated.</p>
+    </div>
+
+    <div class="bg-[#14141c]/90 border border-white/10 rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.4)] backdrop-blur-xl">
+      
+      <div class="grid grid-cols-2 border-b border-white/10">
+        <a routerLink="/login" class="py-4 text-center font-display text-base font-bold uppercase tracking-widest text-white border-b-2 border-[#E50914]">Sign In</a>
+        <a routerLink="/register" class="py-4 text-center font-display text-base font-bold uppercase tracking-widest text-neutral-400 hover:text-white transition-all">Register</a>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="p-7 space-y-5">
+        
+        @if (errorMessage()) {
+          <div class="p-4 rounded-xl bg-red-950/60 border border-red-800/80 text-red-200 text-sm flex items-start gap-3">
+            <span class="text-red-400">⚠️</span>
+            <span>{{ errorMessage() }}</span>
+          </div>
+        }
+
+        <div class="space-y-2">
+          <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-neutral-400">Email Address</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="you@example.com"
+            class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-neutral-500 focus:outline-none focus:border-white/20 transition-colors"
+            [ngClass]="{ 'border-red-500': f['email'].touched && f['email'].invalid }"
+          />
+          @if (f['email'].touched && f['email'].invalid) {
+            <p class="text-xs text-red-400 mt-1">
+              @if (f['email'].errors?.['required']) { Email is required. }
+              @if (f['email'].errors?.['email']) { Enter a valid email address. }
+            </p>
+          }
+        </div>
+
+        <div class="space-y-2">
+          <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-neutral-400">Password</label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            placeholder="••••••••"
+            class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-neutral-500 focus:outline-none focus:border-white/20 transition-colors"
+            [ngClass]="{ 'border-red-500': f['password'].touched && f['password'].invalid }"
+          />
+          @if (f['password'].touched && f['password'].invalid) {
+            <p class="text-xs text-red-400 mt-1">
+              @if (f['password'].errors?.['required']) { Password is required. }
+              @if (f['password'].errors?.['minlength']) { Password must be at least 6 characters. }
+            </p>
+          }
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="isLoading()"
+          class="w-full py-3.5 rounded-xl text-sm font-bold uppercase tracking-wider bg-[#E50914] hover:bg-[#b80710] text-white transition-all duration-200 hover:scale-[1.01] shadow-[0_0_24px_rgba(229,9,20,0.25)] cursor-pointer disabled:opacity-50"
+        >
+          @if (isLoading()) {
+            <span>Signing In...</span>
+          } @else {
+            <span>Sign In to MovieHub</span>
+          }
+        </button>
+      </form>
+
+    </div>
+  </div>
+</div>

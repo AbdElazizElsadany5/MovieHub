@@ -16,7 +16,17 @@ export class FavoriteService {
     private readonly http: HttpClient,
     private readonly authService: AuthService,
     private readonly movieService: MovieService
-  ) {}
+  ) {
+    this.authService.user$.subscribe((user) => {
+      if (user) {
+        this.getFavorites().subscribe({
+          error: (err) => console.warn('Could not load favorites on login:', err)
+        });
+      } else {
+        this.favorites = [];
+      }
+    });
+  }
 
   getFavorites(): Observable<Movie[]> {
     return this.movieService.getMovies().pipe(
