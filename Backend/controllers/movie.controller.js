@@ -18,6 +18,7 @@ const addMovie = catchAsync(async (req, res, next) => {
 });
 
 const getAllMovies = catchAsync(async (req, res, next) => {
+    const totalMovies = await Movie.countDocuments();
     const features = new ApiFeatures(Movie.find(), req.query)
         .filter()
         .search()
@@ -28,8 +29,10 @@ const getAllMovies = catchAsync(async (req, res, next) => {
     const movies = await features.query
         .populate("createdBy", "name -_id");
 
+
     res.status(200).json({
         status: "success",
+        totalMovies,
         results: movies.length,
         data: {
             movies
@@ -38,12 +41,13 @@ const getAllMovies = catchAsync(async (req, res, next) => {
 });
 
 const getMovie = catchAsync(async (req, res, next) => {
+
     const movie = await Movie.findById(req.params.id)
         .populate("createdBy", "name -_id");
  
-    if (!movie) {
-        return next(new AppError(404, "Movie not found"));
-    }
+        if (!movie) {
+    return next(new AppError(404, "Movie not found"));
+}
 
     res.status(200).json({
         status: "success",
@@ -63,6 +67,10 @@ const updateMovie = catchAsync(async (req, res, next) => {
         }
     );
 
+    if (!movie) {
+        return next(new AppError(404, "Movie not found"));
+    }
+
     res.status(200).json({
         status: "success",
         data: {
@@ -72,7 +80,11 @@ const updateMovie = catchAsync(async (req, res, next) => {
 });
 
 const deleteMovie = catchAsync(async (req, res, next) => {
-    await Movie.findByIdAndDelete(req.params.id);
+    const movie = await Movie.findByIdAndDelete(req.params.id);
+
+    if (!movie) {
+        return next(new AppError(404, "Movie not found"));
+    }
 
     res.status(204).send();
 });
