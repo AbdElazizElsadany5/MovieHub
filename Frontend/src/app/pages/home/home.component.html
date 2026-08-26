@@ -1,1 +1,99 @@
- 
+<section class="relative min-h-[650px] overflow-hidden bg-cover bg-center"
+  [style.background-image]="'url(' + heroMovie.backdrop + ')'">
+  <div class="absolute inset-0 bg-gradient-to-r from-[#0d0d10] via-[#0d0d10]/80 to-transparent"></div>
+  <div class="absolute inset-0 bg-gradient-to-t from-[#0d0d10] via-transparent to-black/30"></div>
+
+  <div class="relative mx-auto flex min-h-[650px] max-w-[1500px] items-end px-6 pb-18 lg:px-8">
+    <div class="max-w-2xl">
+      <div class="mb-6 flex gap-3">
+        @for (genre of heroMovie.genres; track genre) {
+        <span
+          class="rounded-full border border-red-600/40 bg-red-950/40 px-4 py-1 text-sm tracking-widest text-red-400">
+          {{ genre }}
+        </span>
+        }
+        <span class="py-1 text-gray-300">{{ heroMovie.releaseYear }}</span>
+      </div>
+
+      <h1 class="font-display text-6xl font-semibold tracking-wide sm:text-8xl">
+        {{ heroMovie.title }}
+      </h1>
+
+      <div class="mt-5 flex items-center gap-4">
+        <span class="rounded-lg bg-amber-500/20 px-4 py-2 font-semibold text-amber-400">
+          ★ {{ heroMovie.rating }}
+        </span>
+        <span class="text-gray-300">{{ heroMovie.cast?.join(' · ') }}</span>
+      </div>
+
+      <p class="mt-6 max-w-xl leading-7 text-gray-300">
+        {{ heroMovie.overview }}
+      </p>
+
+      <div class="mt-9 flex flex-wrap gap-4">
+        <button class="rounded-2xl bg-red-600 px-7 py-4 font-semibold hover:bg-red-700">
+          ▶ Play Trailer
+        </button>
+
+        <a routerLink="/movies"
+          class="rounded-2xl border border-white/20 bg-white/5 px-7 py-4 font-semibold hover:bg-white/10">
+          More Info
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mx-auto max-w-[1500px] space-y-18 px-6 py-16 lg:px-8">
+  <div>
+    <div class="mb-7 flex items-end gap-4">
+      <h2 class="font-display text-4xl tracking-wide">FEATURED</h2>
+      <span class="pb-1 text-gray-400">Handpicked Picks</span>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      @for (movie of featuredMovies; track movie._id) {
+      <app-movie-card [movie]="movie" />
+      }
+    </div>
+  </div>
+
+  <div>
+    <div class="mb-7 flex items-end gap-4">
+      <h2 class="font-display text-4xl tracking-wide">LATEST RELEASES</h2>
+      <span class="pb-1 text-gray-400">New This Month</span>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      @for (movie of latestMovies; track movie._id) {
+      <app-movie-card [movie]="movie" />
+      }
+    </div>
+  </div>
+
+  <div>
+    <div class="mb-7 flex items-end gap-4">
+      <h2 class="font-display text-4xl tracking-wide">TOP RATED</h2>
+      <span class="pb-1 text-gray-400">Audience Favorites</span>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      @for (movie of topRatedMovies; track movie._id) {
+      <app-movie-card [movie]="movie" />
+      }
+    </div>
+  </div>
+
+  <div>
+    <h2 class="mb-7 font-display text-4xl tracking-wide">BROWSE BY GENRE</h2>
+
+    <div class="grid grid-cols-2 gap-4 md:grid-cols-5">
+      @for (genre of genres; track genre) {
+      <a [routerLink]="['/movies']" [queryParams]="{ genre: genre }"
+        class="rounded-2xl border border-white/10 bg-gradient-to-br from-red-950 to-[#1a1012] px-5 py-10 text-center font-display text-2xl tracking-widest transition hover:-translate-y-1 hover:border-red-600 hover:shadow-lg hover:shadow-red-900/40">
+        {{ genre }}
+      </a>
+      }
+    </div>
+  </div>
+</section>
