@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MovieCardComponent } from '../../components/movie-card/movie-card.component';
 import { Movie } from '../../models/movie.model';
@@ -7,7 +8,7 @@ import { MovieService } from '../../services/movie.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, MovieCardComponent],
+  imports: [CommonModule, RouterLink, MovieCardComponent],
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit, OnDestroy {
