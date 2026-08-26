@@ -56,7 +56,6 @@ export class HomeComponent implements OnInit, OnDestroy {
           .sort((a, b) => b.releaseYear - a.releaseYear)
           .slice(0, 6);
 
-        // Zoneless change detection needs an explicit notification after an HTTP callback.
         this.cdr.markForCheck();
         this.startHeroSlider();
       },

@@ -1,1 +1,1 @@
-// TODO: Implement user list component
+export class UserListComponent {}

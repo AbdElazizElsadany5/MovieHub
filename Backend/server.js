@@ -8,5 +8,4 @@ const port = process.env.PORT || 5000
 app.listen(port, () => {
     console.log(chalk.bgGreen(`Server is running at: http://localhost:${port}`));
 })
-module.exports = app;
-// Force server restart to apply CORS middleware
+module.exports = app;

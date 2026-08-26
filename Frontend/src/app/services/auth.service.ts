@@ -22,7 +22,6 @@ export class AuthService {
   userRole = computed(() => this.currentUser()?.role || null);
   isAdmin = computed(() => this.userRole() === 'admin');
 
-  /** Observable wrapper around currentUser signal — used by NavbarComponent */
   readonly user$ = toObservable(this.currentUser);
 
   constructor() {
