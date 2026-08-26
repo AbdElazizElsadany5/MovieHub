@@ -4,6 +4,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MovieService } from '../../services/movie.service';
+import { FavoriteService } from '../../services/favorite.service';
 import { AuthService } from '../../services/auth.service';
 import { Movie } from '../../models/movie.model';
 import { Review } from '../../models/review.model';
@@ -18,6 +19,7 @@ export class MovieDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private movieService = inject(MovieService);
+  private favoriteService = inject(FavoriteService);
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
   private sanitizer = inject(DomSanitizer);
@@ -27,7 +29,10 @@ export class MovieDetailsComponent implements OnInit {
   reviews = signal<Review[]>([]);
   isLoading = signal(true);
   isTrailerOpen = signal(false);
-  isFavorite = signal(false);
+  isFavorite = computed(() => {
+    const m = this.movie();
+    return m ? this.favoriteService.isFavorite(m._id) : false;
+  });
   reviewSubmitting = signal(false);
   reviewError = signal<string | null>(null);
   reviewSuccess = signal(false);
@@ -148,7 +153,10 @@ export class MovieDetailsComponent implements OnInit {
       this.router.navigate(['/login']);
       return;
     }
-    this.isFavorite.update(v => !v);
+    const current = this.movie();
+    if (current) {
+      this.favoriteService.toggleFavorite(current).subscribe();
+    }
   }
 
   setActiveTab(tab: 'overview' | 'cast' | 'reviews'): void {

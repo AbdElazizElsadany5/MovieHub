@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map, Observable, tap, switchMap } from 'rxjs';
+import { map, Observable, tap, switchMap, of } from 'rxjs';
 import { Movie } from '../models/movie.model';
 import { MovieService } from './movie.service';
 import { AuthService } from './auth.service';
@@ -29,6 +29,11 @@ export class FavoriteService {
   }
 
   getFavorites(): Observable<Movie[]> {
+    if (!this.authService.getToken()) {
+      this.favorites = [];
+      return of([]);
+    }
+
     return this.movieService.getMovies().pipe(
       switchMap((allMovies) => {
         return this.http.get<{ data: Array<{ movie: string | Movie }> }>(this.apiUrl, { headers: this.headers }).pipe(
@@ -72,7 +77,7 @@ export class FavoriteService {
   }
 
   private get headers(): HttpHeaders {
-    const token = this.authService.token;
+    const token = this.authService.getToken();
     return token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : new HttpHeaders();
   }
 }
