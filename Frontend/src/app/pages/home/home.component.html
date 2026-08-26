@@ -76,7 +76,7 @@
             [attr.aria-label]="'Show slide ' + (index + 1)"
             [class.bg-red-600]="currentHeroIndex === index"
             [class.w-8]="currentHeroIndex === index"
-            [class.bg-white/50]="currentHeroIndex !== index"
+            [ngClass]="{ 'bg-white/50': currentHeroIndex !== index }"
             class="h-2 rounded-full transition-all hover:bg-white"
           ></button>
         }

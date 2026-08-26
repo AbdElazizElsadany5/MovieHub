@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   topRatedMovies: Movie[] = [];
   latestMovies: Movie[] = [];
 
-  
+
   genres = [
     'Action',
     'Drama',
@@ -39,7 +39,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private readonly movieService: MovieService,
     private readonly cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.movieService.getMovies().subscribe({
