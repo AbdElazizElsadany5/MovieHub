@@ -238,17 +238,37 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  availableGenres: string[] = [
+    'Action', 'Drama', 'Sci-Fi', 'Thriller', 'Comedy',
+    'Horror', 'Romance', 'Adventure', 'Crime', 'Animation'
+  ];
+  selectedGenres: string[] = [];
+
+  toggleGenre(genre: string): void {
+    const idx = this.selectedGenres.indexOf(genre);
+    if (idx > -1) {
+      this.selectedGenres.splice(idx, 1);
+    } else {
+      this.selectedGenres.push(genre);
+    }
+  }
+
+  isGenreSelected(genre: string): boolean {
+    return this.selectedGenres.includes(genre);
+  }
+
   // --- MOVIE MANAGEMENT ACTIONS ---
   openAddMovieModal(): void {
     this.isEditMode = false;
     this.selectedMovieId = null;
+    this.selectedGenres = ['Action', 'Drama'];
     this.movieForm = {
       title: '',
       overview: '',
       poster: '',
       backdrop: '',
       trailerUrl: '',
-      genresInput: 'Action, Drama',
+      genresInput: '',
       castInput: 'Robert Downey Jr., Chris Evans, Scarlett Johansson',
       releaseYear: new Date().getFullYear(),
       rating: 8.0,
@@ -260,13 +280,14 @@ export class DashboardComponent implements OnInit {
   openEditMovieModal(movie: Movie): void {
     this.isEditMode = true;
     this.selectedMovieId = movie._id;
+    this.selectedGenres = movie.genres ? [...movie.genres] : [];
     this.movieForm = {
       title: movie.title || '',
       overview: movie.overview || '',
       poster: movie.poster || '',
       backdrop: movie.backdrop || '',
       trailerUrl: movie.trailerUrl || '',
-      genresInput: movie.genres ? movie.genres.join(', ') : '',
+      genresInput: '',
       castInput: movie.cast ? movie.cast.join(', ') : '',
       releaseYear: movie.releaseYear || 2024,
       rating: movie.rating || 8.0,
@@ -281,10 +302,7 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
-    const genres = this.movieForm.genresInput
-      .split(',')
-      .map((g) => g.trim())
-      .filter((g) => g.length > 0);
+    const genres = this.selectedGenres.length > 0 ? [...this.selectedGenres] : ['Action'];
 
     const cast = this.movieForm.castInput
       ? this.movieForm.castInput.split(',').map((c) => c.trim()).filter((c) => c.length > 0)
