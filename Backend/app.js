@@ -30,10 +30,14 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+const mongoose = require('mongoose');
+
 app.get('/api/health', (req, res) => {
+  const states = { 0: 'disconnected', 1: 'connected', 2: 'connecting', 3: 'disconnecting' };
   res.status(200).json({
     status: 'success',
-    message: 'MovieHub API Server is running smoothly!'
+    message: 'MovieHub API Server is running smoothly!',
+    dbState: states[mongoose.connection.readyState] || 'unknown'
   });
 });
 
