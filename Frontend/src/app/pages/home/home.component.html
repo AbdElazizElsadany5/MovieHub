@@ -1,3 +1,10 @@
+@if (isLoading) {
+<div class="min-h-screen bg-[#0d0d10] flex flex-col items-center justify-center gap-4">
+  <div class="w-14 h-14 rounded-full border-4 border-red-600 border-t-transparent animate-spin"></div>
+  <p class="text-gray-400 text-sm font-semibold tracking-widest animate-pulse uppercase">Loading MovieHub...</p>
+</div>
+} @else {
+
 @if (heroMovie) {
 <section class="relative min-h-[650px] overflow-hidden bg-[#0d0d10] text-white">
   <img [src]="heroMovie.backdrop || heroMovie.poster" [alt]="heroMovie.title"
@@ -121,3 +128,4 @@
     </div>
   </div>
 </section>
+}

@@ -32,11 +32,11 @@ exports.login = catchAsync(async (req, res, next) => {
     const { email, password } = req.body
     const finduser = await User.findOne({ email })
     if (!finduser) {
-        return next(new AppError(400, "User Not Exists"));
+        return next(new AppError(400, "Invalid email or password"));
     }
     const matchpassword = await bcrypt.compare(password, finduser.password)
     if (!matchpassword) {
-        return next(new AppError(400, "Password Not Match"));
+        return next(new AppError(400, "Invalid email or password"));
     }
     const token = await jwtSign({ id: finduser._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN })
     res.status(200).json({

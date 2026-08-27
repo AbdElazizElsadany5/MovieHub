@@ -6,9 +6,10 @@ const bcrypt = require("bcrypt");
 exports.updateprofile = catchAsync(async (req, res, next) => {
     const { name, email } = req.body;
     const user = await User.findByIdAndUpdate(
-        req.user.id,
+        req.user._id || req.user.id,
         { name, email },
         {
+            new: true,
             returnDocument: "after",
             runValidators: false
         }
@@ -24,19 +25,23 @@ exports.updateprofile = catchAsync(async (req, res, next) => {
 });
 
 exports.changepassword = catchAsync(async (req, res, next) => {
-    const user = await User.findById(req.user.id).select("+password");
+    const user = await User.findById(req.user._id || req.user.id);
     if (!user) {
         return next(new AppError(404, "User Not Found"));
     }
-    const matchpassword = await bcrypt.compare(
-        req.body.password,
-        user.password
-    );
-    if (!matchpassword) {
-        return next(new AppError(400, "Password Not Match"));
+    const newPassword = req.body.newPassword || req.body.password;
+    if (!newPassword) {
+        return next(new AppError(400, "Please provide a new password"));
     }
-    user.password = await bcrypt.hash(req.body.newPassword, 10);
-    await user.save({ validateBeforeSave: false });
+    const saltRounds = Number(process.env.SALT_ROUND) || 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    await User.findByIdAndUpdate(
+        req.user._id || req.user.id,
+        { password: hashedPassword, confirmPassword: hashedPassword },
+        { runValidators: false, new: true }
+    );
+
     res.status(200).json({
         success: true,
         message: "Password Changed Successfully"
@@ -44,7 +49,7 @@ exports.changepassword = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteprofile = catchAsync(async (req, res, next) => {
-    const user = await User.findByIdAndDelete(req.user.id);
+    const user = await User.findByIdAndDelete(req.user._id || req.user.id);
     if (!user) {
         return next(new AppError(404, "User Not Found"));
     }
@@ -63,6 +68,7 @@ exports.updateimage = catchAsync(async (req, res, next) => {
         req.user._id || req.user.id,
         { image: imageUrl },
         {
+            new: true,
             returnDocument: "after",
             runValidators: false
         }

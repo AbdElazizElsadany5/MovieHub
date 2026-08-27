@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MovieCardComponent } from '../../components/movie-card/movie-card.component';
 import { Movie } from '../../models/movie.model';
@@ -12,6 +12,7 @@ import { MovieService } from '../../services/movie.service';
   templateUrl: './movies.component.html'
 })
 export class MoviesComponent implements OnInit {
+  isLoading = true;
   allMovies: Movie[] = [];
   filteredMovies: Movie[] = [];
 
@@ -29,29 +30,46 @@ export class MoviesComponent implements OnInit {
   constructor(
     private readonly movieService: MovieService,
     private readonly route: ActivatedRoute,
+    private readonly router: Router,
     private readonly cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.movieService.getMovies().subscribe({
       next: (movies) => {
         this.allMovies = movies;
-        this.applyFilters();
-        this.cdr.markForCheck();
+        this.applyFilters(false);
+        this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error loading movies:', error);
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
 
     this.route.queryParams.subscribe(params => {
       this.selectedGenre = params['genre'] || '';
-      this.applyFilters();
+      if (params['page']) {
+        this.currentPage = Number(params['page']) || 1;
+      }
+      this.applyFilters(false);
       this.cdr.markForCheck();
     });
   }
 
-  applyFilters(): void {
+  onFilterChange(): void {
+    this.applyFilters(true);
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { page: 1, genre: this.selectedGenre || null },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  applyFilters(resetPage: boolean = false): void {
     let result = [...this.allMovies];
 
     if (this.searchText.trim()) {
@@ -80,7 +98,9 @@ export class MoviesComponent implements OnInit {
     }
 
     this.filteredMovies = result;
-    this.currentPage = 1;
+    if (resetPage) {
+      this.currentPage = 1;
+    }
   }
 
   get paginatedMovies(): Movie[] {
@@ -94,6 +114,11 @@ export class MoviesComponent implements OnInit {
 
   changePage(page: number): void {
     this.currentPage = page;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { page },
+      queryParamsHandling: 'merge'
+    });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

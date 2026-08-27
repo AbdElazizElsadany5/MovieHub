@@ -16,7 +16,7 @@ const auth = async (req, res, next) => {
         const user = await User.findOne({
             isDeleted: { $ne: true },
             _id: decode.id
-        }).select("+role");
+        }).select("-password -confirmPassword");
         if (!user) {
             return next(new AppError(401, "User not found"));
         }

@@ -1,5 +1,5 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -18,6 +18,7 @@ import { Review } from '../../models/review.model';
 export class MovieDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private location = inject(Location);
   private movieService = inject(MovieService);
   private favoriteService = inject(FavoriteService);
   private authService = inject(AuthService);
@@ -221,6 +222,6 @@ export class MovieDetailsComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/']);
+    this.location.back();
   }
 }

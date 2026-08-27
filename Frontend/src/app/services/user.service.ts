@@ -32,13 +32,13 @@ export class UserService {
 
   // Profile operations for authenticated user
   updateProfile(data: { name: string; email: string }): Observable<UserResponse> {
-    return this.http.patch<UserResponse>(`${this.API_URL}/updateprofile`, data, {
+    return this.http.put<UserResponse>(`${this.API_URL}/updateprofile`, data, {
       headers: this.getAuthHeaders()
     });
   }
 
   updateImage(image: string): Observable<UserResponse> {
-    return this.http.patch<UserResponse>(
+    return this.http.put<UserResponse>(
       `${this.API_URL}/updateimage`,
       { image },
       { headers: this.getAuthHeaders() }
@@ -46,7 +46,7 @@ export class UserService {
   }
 
   changePassword(data: { password: string; newPassword: string }): Observable<{ success: boolean; message: string }> {
-    return this.http.patch<{ success: boolean; message: string }>(
+    return this.http.put<{ success: boolean; message: string }>(
       `${this.API_URL}/changepassword`,
       data,
       { headers: this.getAuthHeaders() }

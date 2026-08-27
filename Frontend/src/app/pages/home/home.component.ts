@@ -13,12 +13,11 @@ import { MovieService } from '../../services/movie.service';
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
+  isLoading = true;
   movies: Movie[] = [];
   featuredMovies: Movie[] = [];
   topRatedMovies: Movie[] = [];
   latestMovies: Movie[] = [];
-
-
   genres = [
     'Action',
     'Drama',
@@ -43,6 +42,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.movieService.getMovies().subscribe({
       next: (movies) => {
         console.log('MOVIES FROM API:', movies);
@@ -57,12 +57,14 @@ export class HomeComponent implements OnInit, OnDestroy {
           .sort((a, b) => b.releaseYear - a.releaseYear)
           .slice(0, 6);
 
-        this.cdr.markForCheck();
+        this.isLoading = false;
+        this.cdr.detectChanges();
         this.startHeroSlider();
       },
       error: (error) => {
         console.error('ERROR FROM API:', error);
-        this.cdr.markForCheck();
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }

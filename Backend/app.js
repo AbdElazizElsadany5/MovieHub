@@ -2,27 +2,49 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 require('dotenv').config();
+
 const authRoutes = require('./routes/auth.route');
 const userRoutes = require('./routes/user.route');
 const movieRoutes = require('./routes/movie.route');
 const favoriteRoutes = require('./routes/favorite.route');
 const reviewRoutes = require('./routes/review.route');
+
 const globalError = require('./middlewares/globalError');
 const AppError = require('./utils/AppError');
 
 const app = express();
-app.use(cors());
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  if (req.method === 'OPTIONS') {
+    return res.status(200).send();
+  }
+  next();
+});
+
 app.use(express.json());
-if (process.env.NODE_ENV === 'development' || true) {
+
+if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'success', message: 'MovieHub API Server is running smoothly!' });
+  res.status(200).json({
+    status: 'success',
+    message: 'MovieHub API Server is running smoothly!'
+  });
 });
+
 app.get('/', (req, res) => {
   res.send('Welcome to MovieHub API');
 });
-app.get('/favicon.ico', (req, res) => res.status(204).end());
+
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).end();
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/movies', movieRoutes);

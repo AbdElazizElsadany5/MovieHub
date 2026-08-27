@@ -71,9 +71,10 @@ export class ProfileComponent implements OnInit {
         const u = res.data?.user || res.data;
         if (u) {
           this.user = u;
-          if (!this.nameInput) this.nameInput = u.name || '';
-          if (!this.emailInput) this.emailInput = u.email || '';
-          if (!this.imageUrlInput) this.imageUrlInput = u.image || '';
+          this.nameInput = u.name || '';
+          this.emailInput = u.email || '';
+          this.imageUrlInput = u.image || '';
+          this.cdr.detectChanges();
         }
       }
     });
@@ -149,20 +150,24 @@ export class ProfileComponent implements OnInit {
   onChangePassword(): void {
     if (!this.currentPassword || !this.newPassword || !this.confirmNewPassword) {
       this.passwordErrorMsg = 'Please fill in all password fields.';
+      this.cdr.detectChanges();
       return;
     }
     if (this.newPassword !== this.confirmNewPassword) {
       this.passwordErrorMsg = 'New password and confirm password do not match.';
+      this.cdr.detectChanges();
       return;
     }
     if (this.newPassword.length < 6) {
       this.passwordErrorMsg = 'Password must be at least 6 characters long.';
+      this.cdr.detectChanges();
       return;
     }
 
     this.passwordErrorMsg = '';
     this.passwordSuccessMsg = '';
     this.isChangingPassword = true;
+    this.cdr.detectChanges();
 
     this.userService.changePassword({ password: this.currentPassword, newPassword: this.newPassword }).subscribe({
       next: (res) => {
@@ -171,10 +176,12 @@ export class ProfileComponent implements OnInit {
         this.currentPassword = '';
         this.newPassword = '';
         this.confirmNewPassword = '';
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.isChangingPassword = false;
         this.passwordErrorMsg = err.error?.message || 'Incorrect current password or update failed.';
+        this.cdr.detectChanges();
       }
     });
   }
@@ -182,22 +189,26 @@ export class ProfileComponent implements OnInit {
   removeFavorite(movieId: string): void {
     this.favoriteService.removeFavorite(movieId).subscribe(() => {
       this.favoriteMovies = this.favoriteMovies.filter(m => m._id !== movieId);
+      this.cdr.detectChanges();
     });
   }
 
   onDeleteAccount(): void {
     this.isDeletingAccount = true;
     this.deleteErrorMsg = '';
+    this.cdr.detectChanges();
 
     this.userService.deleteProfile().subscribe({
       next: () => {
         this.isDeletingAccount = false;
         this.showDeleteModal = false;
         this.authService.logout();
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.isDeletingAccount = false;
         this.deleteErrorMsg = err.error?.message || 'Failed to delete profile.';
+        this.cdr.detectChanges();
       }
     });
   }

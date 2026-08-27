@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -18,6 +18,7 @@ export class DashboardComponent implements OnInit {
   private userService = inject(UserService);
   private movieService = inject(MovieService);
   private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
 
   activeTab: 'dashboard' | 'users' | 'movies' = 'dashboard';
 
@@ -88,10 +89,12 @@ export class DashboardComponent implements OnInit {
       next: (res: any) => {
         this.isLoadingUsers = false;
         this.users = res.data || res.users || [];
+        this.cdr.detectChanges();
       },
       error: () => {
         this.isLoadingUsers = false;
         this.users = [];
+        this.cdr.detectChanges();
       }
     });
   }
@@ -102,10 +105,12 @@ export class DashboardComponent implements OnInit {
       next: (movies) => {
         this.isLoadingMovies = false;
         this.movies = movies || [];
+        this.cdr.detectChanges();
       },
       error: () => {
         this.isLoadingMovies = false;
         this.movies = [];
+        this.cdr.detectChanges();
       }
     });
   }
