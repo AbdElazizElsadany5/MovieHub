@@ -61,6 +61,7 @@ export class DashboardComponent implements OnInit {
     backdrop: '',
     trailerUrl: '',
     genresInput: '',
+    castInput: '',
     releaseYear: new Date().getFullYear(),
     rating: 8.0,
     duration: 120
@@ -248,6 +249,7 @@ export class DashboardComponent implements OnInit {
       backdrop: '',
       trailerUrl: '',
       genresInput: 'Action, Drama',
+      castInput: 'Robert Downey Jr., Chris Evans, Scarlett Johansson',
       releaseYear: new Date().getFullYear(),
       rating: 8.0,
       duration: 120
@@ -265,6 +267,7 @@ export class DashboardComponent implements OnInit {
       backdrop: movie.backdrop || '',
       trailerUrl: movie.trailerUrl || '',
       genresInput: movie.genres ? movie.genres.join(', ') : '',
+      castInput: movie.cast ? movie.cast.join(', ') : '',
       releaseYear: movie.releaseYear || 2024,
       rating: movie.rating || 8.0,
       duration: movie.duration || 120
@@ -283,6 +286,10 @@ export class DashboardComponent implements OnInit {
       .map((g) => g.trim())
       .filter((g) => g.length > 0);
 
+    const cast = this.movieForm.castInput
+      ? this.movieForm.castInput.split(',').map((c) => c.trim()).filter((c) => c.length > 0)
+      : [];
+
     const payload: Partial<Movie> = {
       title: this.movieForm.title,
       overview: this.movieForm.overview,
@@ -290,6 +297,7 @@ export class DashboardComponent implements OnInit {
       backdrop: this.movieForm.backdrop,
       trailerUrl: this.movieForm.trailerUrl,
       genres,
+      cast,
       releaseYear: Number(this.movieForm.releaseYear),
       rating: Number(this.movieForm.rating),
       duration: Number(this.movieForm.duration)

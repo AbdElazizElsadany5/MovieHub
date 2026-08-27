@@ -261,45 +261,98 @@
     </div>
 
     <!-- MODAL: ADD / EDIT MOVIE -->
-    <div *ngIf="showMovieFormModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <div class="w-full max-w-lg rounded-2xl border border-white/10 bg-[#14141e] p-6 space-y-6 shadow-2xl">
-        <h3 class="text-xl font-bold text-white border-b border-white/10 pb-3">{{ isEditMode ? 'Edit Movie' : 'Add New Movie' }}</h3>
+    <div *ngIf="showMovieFormModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-[fadeIn_0.2s_ease-out]">
+      <div class="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/15 bg-gradient-to-b from-[#181824] via-[#12121c] to-[#0c0c14] p-6 sm:p-8 space-y-6 shadow-[0_25px_70px_rgba(0,0,0,0.8)] custom-scrollbar">
         
-        <form (ngSubmit)="saveMovie()" class="space-y-4 text-sm">
-          <div>
-            <label class="block text-gray-400 mb-1">Title *</label>
-            <input type="text" [(ngModel)]="movieForm.title" name="title" required class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-2 text-white focus:border-red-500 focus:outline-none" />
-          </div>
-          <div>
-            <label class="block text-gray-400 mb-1">Poster Image URL *</label>
-            <input type="text" [(ngModel)]="movieForm.poster" name="poster" required class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-2 text-white focus:border-red-500 focus:outline-none" />
-          </div>
-          <div>
-            <label class="block text-gray-400 mb-1">Backdrop Image URL</label>
-            <input type="text" [(ngModel)]="movieForm.backdrop" name="backdrop" class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-2 text-white focus:border-red-500 focus:outline-none" />
-          </div>
-          <div>
-            <label class="block text-gray-400 mb-1">Genres (comma separated)</label>
-            <input type="text" [(ngModel)]="movieForm.genresInput" name="genresInput" placeholder="Action, Sci-Fi, Drama" class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-2 text-white focus:border-red-500 focus:outline-none" />
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block text-gray-400 mb-1">Release Year</label>
-              <input type="number" [(ngModel)]="movieForm.releaseYear" name="releaseYear" class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-2 text-white focus:border-red-500 focus:outline-none" />
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-white/10 pb-5">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-2xl bg-red-600/20 border border-red-500/30 flex items-center justify-center text-red-500 shadow-inner">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
+              </svg>
             </div>
             <div>
-              <label class="block text-gray-400 mb-1">Rating (1-10)</label>
-              <input type="number" step="0.1" [(ngModel)]="movieForm.rating" name="rating" class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-2 text-white focus:border-red-500 focus:outline-none" />
+              <h3 class="text-xl font-black text-white tracking-tight">{{ isEditMode ? 'Edit Movie Record' : 'Add New Movie' }}</h3>
+              <p class="text-xs text-gray-400">Fill in the details below to update the live catalog</p>
             </div>
           </div>
-          <div>
-            <label class="block text-gray-400 mb-1">Overview *</label>
-            <textarea [(ngModel)]="movieForm.overview" name="overview" rows="3" required class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-2 text-white focus:border-red-500 focus:outline-none"></textarea>
+          <button type="button" (click)="showMovieFormModal = false" class="h-9 w-9 rounded-xl border border-white/10 bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition flex items-center justify-center">✕</button>
+        </div>
+
+        <form (ngSubmit)="saveMovie()" class="space-y-5 text-sm">
+          <!-- Title & Release Year Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="md:col-span-2">
+              <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Movie Title <span class="text-red-500">*</span></label>
+              <input type="text" [(ngModel)]="movieForm.title" name="title" required placeholder="e.g. Inception" class="w-full rounded-xl border border-white/10 bg-[#0a0a10] px-4 py-3 text-white placeholder-gray-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none transition shadow-inner" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Release Year</label>
+              <input type="number" [(ngModel)]="movieForm.releaseYear" name="releaseYear" placeholder="2024" class="w-full rounded-xl border border-white/10 bg-[#0a0a10] px-4 py-3 text-white placeholder-gray-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none transition shadow-inner" />
+            </div>
           </div>
 
-          <div class="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
-            <button type="button" (click)="showMovieFormModal = false" class="px-5 py-2 rounded-xl border border-white/10 text-gray-300 hover:bg-white/5">Cancel</button>
-            <button type="submit" class="px-6 py-2 rounded-xl bg-red-600 font-semibold text-white hover:bg-red-500">Save Movie</button>
+          <!-- Image Links Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Poster Image URL <span class="text-red-500">*</span></label>
+              <input type="text" [(ngModel)]="movieForm.poster" name="poster" required placeholder="https://image.tmdb.org/t/p/..." class="w-full rounded-xl border border-white/10 bg-[#0a0a10] px-4 py-3 text-white placeholder-gray-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none transition shadow-inner" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Backdrop Image URL</label>
+              <input type="text" [(ngModel)]="movieForm.backdrop" name="backdrop" placeholder="https://image.tmdb.org/t/p/..." class="w-full rounded-xl border border-white/10 bg-[#0a0a10] px-4 py-3 text-white placeholder-gray-600 focus:border-red-500 focus:outline-none transition shadow-inner" />
+            </div>
+          </div>
+
+          <!-- Trailer URL -->
+          <div>
+            <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Trailer YouTube URL</label>
+            <div class="relative">
+              <input type="text" [(ngModel)]="movieForm.trailerUrl" name="trailerUrl" placeholder="https://www.youtube.com/watch?v=..." class="w-full rounded-xl border border-white/10 bg-[#0a0a10] px-4 py-3 text-white placeholder-gray-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none transition shadow-inner pl-10" />
+              <span class="absolute left-3.5 top-3.5 text-red-500 font-bold text-xs">▶</span>
+            </div>
+          </div>
+
+          <!-- Genres & Cast Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Genres <span class="text-xs font-normal text-gray-500">(comma separated)</span></label>
+              <input type="text" [(ngModel)]="movieForm.genresInput" name="genresInput" placeholder="Action, Sci-Fi, Drama" class="w-full rounded-xl border border-white/10 bg-[#0a0a10] px-4 py-3 text-white placeholder-gray-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none transition shadow-inner" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Cast & Writers <span class="text-xs font-normal text-gray-500">(comma separated)</span></label>
+              <input type="text" [(ngModel)]="movieForm.castInput" name="castInput" placeholder="Leonardo DiCaprio, Cillian Murphy" class="w-full rounded-xl border border-white/10 bg-[#0a0a10] px-4 py-3 text-white placeholder-gray-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none transition shadow-inner" />
+            </div>
+          </div>
+
+          <!-- Rating & Duration Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Rating (1 - 10)</label>
+              <input type="number" step="0.1" [(ngModel)]="movieForm.rating" name="rating" placeholder="8.5" class="w-full rounded-xl border border-white/10 bg-[#0a0a10] px-4 py-3 text-white placeholder-gray-600 focus:border-red-500 focus:outline-none transition shadow-inner" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Duration <span class="text-xs font-normal text-gray-500">(minutes)</span></label>
+              <input type="number" [(ngModel)]="movieForm.duration" name="duration" placeholder="120" class="w-full rounded-xl border border-white/10 bg-[#0a0a10] px-4 py-3 text-white placeholder-gray-600 focus:border-red-500 focus:outline-none transition shadow-inner" />
+            </div>
+          </div>
+
+          <!-- Overview -->
+          <div>
+            <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Synopsis / Overview <span class="text-red-500">*</span></label>
+            <textarea [(ngModel)]="movieForm.overview" name="overview" rows="3" required placeholder="Enter detailed plot overview..." class="w-full rounded-xl border border-white/10 bg-[#0a0a10] p-4 text-white placeholder-gray-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none transition shadow-inner resize-none"></textarea>
+          </div>
+
+          <!-- Footer Actions -->
+          <div class="flex items-center justify-end gap-3 pt-5 border-t border-white/10">
+            <button type="button" (click)="showMovieFormModal = false" class="px-6 py-3 rounded-xl border border-white/10 bg-white/5 text-xs font-bold text-gray-300 hover:bg-white/10 hover:text-white transition">Cancel</button>
+            <button type="submit" class="px-8 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-xs font-bold text-white shadow-lg shadow-red-600/30 transition hover:scale-[1.02] flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              {{ isEditMode ? 'Update Movie Record' : 'Save Movie to Database' }}
+            </button>
           </div>
         </form>
       </div>

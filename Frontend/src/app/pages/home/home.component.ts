@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { MovieCardComponent } from '../../components/movie-card/movie-card.component';
 import { Movie } from '../../models/movie.model';
@@ -18,6 +19,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   featuredMovies: Movie[] = [];
   topRatedMovies: Movie[] = [];
   latestMovies: Movie[] = [];
+  isTrailerOpen = false;
+
   genres = [
     'Action',
     'Drama',
@@ -38,8 +41,36 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly movieService: MovieService,
-    private readonly cdr: ChangeDetectorRef
+    private readonly cdr: ChangeDetectorRef,
+    private readonly sanitizer: DomSanitizer
   ) { }
+
+  get safeTrailerUrl(): SafeResourceUrl | null {
+    const url = this.heroMovie?.trailerUrl || '';
+    let videoId = '';
+    if (url.includes('v=')) {
+      videoId = url.split('v=')[1]?.split('&')[0];
+    } else if (url.includes('youtu.be/')) {
+      videoId = url.split('youtu.be/')[1]?.split('?')[0];
+    } else if (url.includes('embed/')) {
+      videoId = url.split('embed/')[1]?.split('?')[0];
+    }
+
+    if (videoId) {
+      return this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube.com/embed/${videoId}?autoplay=1`);
+    }
+    return null;
+  }
+
+  openTrailer(): void {
+    this.isTrailerOpen = true;
+    this.cdr.detectChanges();
+  }
+
+  closeTrailer(): void {
+    this.isTrailerOpen = false;
+    this.cdr.detectChanges();
+  }
 
   ngOnInit(): void {
     this.isLoading = true;
