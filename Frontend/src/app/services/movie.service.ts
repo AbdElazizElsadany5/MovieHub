@@ -3,12 +3,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
 import { Movie, SingleMovieResponse, MoviesListResponse } from '../models/movie.model';
 import { ReviewsResponse, SingleReviewResponse, AddReviewRequest } from '../models/review.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MovieService {
-  private readonly BASE_URL = 'http://localhost:3000/api';
+  private readonly BASE_URL = environment.apiUrl;
   private apiUrl = `${this.BASE_URL}/movies?limit=100`;
 
   constructor(private http: HttpClient) {}

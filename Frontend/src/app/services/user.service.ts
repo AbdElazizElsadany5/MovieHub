@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../models/auth.model';
+import { environment } from '../../environments/environment';
 
 export interface UserResponse {
   success: boolean;
@@ -20,7 +21,7 @@ export interface UsersListResponse {
 })
 export class UserService {
   private http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:3000/api/users';
+  private readonly API_URL = `${environment.apiUrl}/users`;
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('moviehub_token');

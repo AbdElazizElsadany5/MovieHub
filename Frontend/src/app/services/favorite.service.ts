@@ -4,12 +4,13 @@ import { map, Observable, tap, switchMap, of } from 'rxjs';
 import { Movie } from '../models/movie.model';
 import { MovieService } from './movie.service';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FavoriteService {
-  private readonly apiUrl = 'http://localhost:3000/api/favorites';
+  private readonly apiUrl = `${environment.apiUrl}/favorites`;
   private favorites: Movie[] = [];
 
   constructor(
