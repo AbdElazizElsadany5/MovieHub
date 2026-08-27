@@ -17,6 +17,7 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'movies', component: MoviesComponent },
   { path: 'movies/:id', component: MovieDetailsComponent },
+  { path: 'movie/:id', component: MovieDetailsComponent },
   { path: 'favorites', component: FavoritesComponent, canActivate: [authGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
   { path: 'admin', component: DashboardComponent, canActivate: [authGuard, adminGuard] },
