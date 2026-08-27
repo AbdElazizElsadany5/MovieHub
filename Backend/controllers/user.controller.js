@@ -2,14 +2,15 @@ const catchAsync = require("../utils/catchAsync");
 const User = require("../models/user.model");
 const AppError = require("../utils/AppError");
 const bcrypt = require("bcrypt");
+
 exports.updateprofile = catchAsync(async (req, res, next) => {
     const { name, email } = req.body;
     const user = await User.findByIdAndUpdate(
         req.user.id,
         { name, email },
         {
-            new: true,
-            runValidators: true
+            returnDocument: "after",
+            runValidators: false
         }
     ).select("-password -confirmPassword");
     if (!user) {
@@ -21,6 +22,7 @@ exports.updateprofile = catchAsync(async (req, res, next) => {
         data: user
     });
 });
+
 exports.changepassword = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.user.id).select("+password");
     if (!user) {
@@ -34,12 +36,13 @@ exports.changepassword = catchAsync(async (req, res, next) => {
         return next(new AppError(400, "Password Not Match"));
     }
     user.password = await bcrypt.hash(req.body.newPassword, 10);
-    await user.save();
+    await user.save({ validateBeforeSave: false });
     res.status(200).json({
         success: true,
         message: "Password Changed Successfully"
     });
 });
+
 exports.deleteprofile = catchAsync(async (req, res, next) => {
     const user = await User.findByIdAndDelete(req.user.id);
     if (!user) {
@@ -50,16 +53,18 @@ exports.deleteprofile = catchAsync(async (req, res, next) => {
         message: "Profile Deleted Successfully"
     });
 });
+
 exports.updateimage = catchAsync(async (req, res, next) => {
-    if (!req.file) {
-        return next(new AppError(400, "Please Upload An Image"));
+    const imageUrl = req.file ? req.file.filename : (req.body ? req.body.image : null);
+    if (!imageUrl) {
+        return next(new AppError(400, "Please Upload An Image or provide Image URL"));
     }
     const user = await User.findByIdAndUpdate(
-        req.user.id,
-        { image: req.file.filename },
+        req.user._id || req.user.id,
+        { image: imageUrl },
         {
-            new: true,
-            runValidators: true
+            returnDocument: "after",
+            runValidators: false
         }
     ).select("-password -confirmPassword");
     if (!user) {
@@ -70,6 +75,7 @@ exports.updateimage = catchAsync(async (req, res, next) => {
         data: user
     });
 });
+
 exports.getAllUsers = catchAsync(async (req, res, next) => {
     const users = await User.find()
         .select("name email role isActive image");
@@ -80,6 +86,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
         data: users
     });
 });
+
 exports.getUserById = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.id)
     .select("name email role isActive image");
@@ -91,7 +98,11 @@ exports.getUserById = catchAsync(async (req, res, next) => {
         data: user
     });
 });
+
 exports.deleteUserByAdmin = catchAsync(async (req, res, next) => {
+    if (req.user._id.toString() === req.params.id.toString()) {
+        return next(new AppError(400, "You cannot delete your own admin account!"));
+    }
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) {
         return next(new AppError(404, "User Not Found"));
@@ -101,13 +112,14 @@ exports.deleteUserByAdmin = catchAsync(async (req, res, next) => {
         message: "User Deleted Successfully"
     });
 });
+
 exports.updateUserStatus = catchAsync(async (req, res, next) => {
     const user = await User.findByIdAndUpdate(
         req.params.id,
         { isActive: req.body.isActive },
         {
-            new: true,
-            runValidators: true
+            returnDocument: "after",
+            runValidators: false
         }
     ).select("-password -confirmPassword");
     if (!user) {

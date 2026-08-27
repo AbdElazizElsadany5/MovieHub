@@ -1,20 +1,24 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
-import { MoviesComponent } from './pages/movies/movies.component';
-import { FavoritesComponent } from './pages/favorites/favorites.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
-import { ProfileComponent } from './pages/profile/profile.component';
+import { MoviesComponent } from './pages/movies/movies.component';
 import { MovieDetailsComponent } from './pages/movie-details/movie-details.component';
+import { FavoritesComponent } from './pages/favorites/favorites.component';
+import { ProfileComponent } from './pages/profile/profile.component';
+import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
+import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '', component: HomeComponent },
   { path: 'home', component: HomeComponent },
-  { path: 'movies', component: MoviesComponent },
-  { path: 'movie/:id', component: MovieDetailsComponent },
-  { path: 'favorites', component: FavoritesComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'profile', component: ProfileComponent },
-  { path: '**', redirectTo: 'home' }
+  { path: 'movies', component: MoviesComponent },
+  { path: 'movies/:id', component: MovieDetailsComponent },
+  { path: 'favorites', component: FavoritesComponent, canActivate: [authGuard] },
+  { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
+  { path: 'admin', component: DashboardComponent, canActivate: [authGuard, adminGuard] },
+  { path: '**', redirectTo: '' }
 ];

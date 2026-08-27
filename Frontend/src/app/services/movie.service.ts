@@ -67,4 +67,28 @@ export class MovieService {
     };
     return this.http.post<SingleReviewResponse>(`${this.BASE_URL}/reviews`, body, { headers });
   }
+
+  addMovie(movieData: Partial<Movie>): Observable<SingleMovieResponse> {
+    const token = localStorage.getItem('moviehub_token');
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token || ''}`
+    });
+    return this.http.post<SingleMovieResponse>(`${this.BASE_URL}/movies`, movieData, { headers });
+  }
+
+  updateMovie(id: string, movieData: Partial<Movie>): Observable<SingleMovieResponse> {
+    const token = localStorage.getItem('moviehub_token');
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token || ''}`
+    });
+    return this.http.put<SingleMovieResponse>(`${this.BASE_URL}/movies/${id}`, movieData, { headers });
+  }
+
+  deleteMovie(id: string): Observable<any> {
+    const token = localStorage.getItem('moviehub_token');
+    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : new HttpHeaders();
+    return this.http.delete(`${this.BASE_URL}/movies/${id}`, { headers });
+  }
 }

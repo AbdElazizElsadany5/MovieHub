@@ -1,1 +1,381 @@
- 
+<div class="min-h-screen bg-[#0d0d12] text-gray-100 p-4 sm:p-6 lg:p-10 font-sans">
+  <div class="max-w-[1500px] mx-auto space-y-8">
+    
+    <!-- Welcome Hero Banner -->
+    <div class="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-red-950/40 via-[#14141e] to-[#0f0f17] p-6 sm:p-8 shadow-2xl">
+      <div class="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-red-600/10 blur-3xl pointer-events-none"></div>
+      
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative z-10">
+        <div class="space-y-2">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-xs font-semibold text-red-400">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+            </span>
+            MovieHub Admin Control Suite
+          </div>
+          <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight">
+            Welcome back, <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-rose-500">{{ adminName }}</span>! 👋
+          </h1>
+          <p class="text-gray-400 text-sm max-w-xl">
+            Here is your live management portal. Select a section below to oversee registered user accounts or edit movie records.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button (click)="loadUsers(); loadMovies();" class="px-5 py-3 rounded-2xl border border-white/10 bg-white/5 text-sm font-semibold text-white hover:bg-white/10 hover:border-white/20 transition shadow-lg flex items-center gap-2 shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Refresh Database
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Toast Messages -->
+    <div *ngIf="successMsg" class="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-400 text-sm flex items-center justify-between shadow-lg">
+      <span class="flex items-center gap-2 font-medium">✓ {{ successMsg }}</span>
+      <button (click)="successMsg = ''" class="text-emerald-400 hover:text-emerald-200">✕</button>
+    </div>
+    <div *ngIf="errorMsg" class="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-red-400 text-sm flex items-center justify-between shadow-lg">
+      <span class="flex items-center gap-2 font-medium">⚠️ {{ errorMsg }}</span>
+      <button (click)="errorMsg = ''" class="text-red-400 hover:text-red-200">✕</button>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="rounded-2xl border border-white/10 bg-[#14141e] p-6 flex items-center justify-between shadow-xl">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Total Registered Users</p>
+          <h3 class="text-3xl font-black text-white mt-1">{{ totalUsers }}</h3>
+        </div>
+        <div class="h-12 w-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center border border-blue-500/20">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-[#14141e] p-6 flex items-center justify-between shadow-xl">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Active Accounts</p>
+          <h3 class="text-3xl font-black text-emerald-400 mt-1">{{ activeUsersCount }}</h3>
+        </div>
+        <div class="h-12 w-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-[#14141e] p-6 flex items-center justify-between shadow-xl">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Catalog Movies</p>
+          <h3 class="text-3xl font-black text-white mt-1">{{ totalMovies }}</h3>
+        </div>
+        <div class="h-12 w-12 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center border border-red-500/20">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-white/10 bg-[#14141e] p-6 flex items-center justify-between shadow-xl">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Avg Movie Rating</p>
+          <h3 class="text-3xl font-black text-amber-400 mt-1">★ {{ averageRating }}</h3>
+        </div>
+        <div class="h-12 w-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Navigation Tabs -->
+    <div class="border-b border-white/10 flex items-center gap-8 text-sm font-semibold">
+      <button
+        (click)="activeTab = 'dashboard'"
+        class="pb-4 transition relative flex items-center gap-2"
+        [ngClass]="activeTab === 'dashboard' ? 'text-white border-b-2 border-red-600' : 'text-gray-400 hover:text-white'"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+        </svg>
+        Dashboard
+      </button>
+
+      <button
+        (click)="activeTab = 'users'"
+        class="pb-4 transition relative flex items-center gap-2"
+        [ngClass]="activeTab === 'users' ? 'text-white border-b-2 border-red-600' : 'text-gray-400 hover:text-white'"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        Users Management
+        <span class="ml-1 rounded-full bg-white/10 px-2 py-0.5 text-xs font-bold text-gray-300">{{ users.length }}</span>
+      </button>
+
+      <button
+        (click)="activeTab = 'movies'"
+        class="pb-4 transition relative flex items-center gap-2"
+        [ngClass]="activeTab === 'movies' ? 'text-white border-b-2 border-red-600' : 'text-gray-400 hover:text-white'"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
+        </svg>
+        Movies Management
+        <span class="ml-1 rounded-full bg-white/10 px-2 py-0.5 text-xs font-bold text-gray-300">{{ movies.length }}</span>
+      </button>
+    </div>
+
+    <!-- TAB 1: DASHBOARD SUMMARY -->
+    <div *ngIf="activeTab === 'dashboard'" class="space-y-6">
+      <div class="rounded-3xl border border-white/10 bg-[#14141e] p-6 space-y-4 shadow-xl">
+        <div class="flex items-center justify-between border-b border-white/10 pb-3">
+          <h3 class="font-bold text-white text-lg flex items-center gap-2">
+            <span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+            System Quick Actions
+          </h3>
+        </div>
+        <p class="text-gray-400 text-sm">Select an action below to quickly jump into managing your application:</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <button (click)="activeTab = 'users'" class="p-5 rounded-2xl border border-white/10 bg-[#0f0f17] hover:border-red-500/50 hover:bg-red-500/10 text-left transition space-y-2 group">
+            <div class="font-bold text-white group-hover:text-red-400 flex items-center justify-between text-base">
+              Manage Users
+              <span>→</span>
+            </div>
+            <p class="text-xs text-gray-400">View, search, enable, disable or delete user accounts.</p>
+          </button>
+
+          <button (click)="activeTab = 'movies'; openAddMovieModal()" class="p-5 rounded-2xl border border-white/10 bg-[#0f0f17] hover:border-red-500/50 hover:bg-red-500/10 text-left transition space-y-2 group">
+            <div class="font-bold text-white group-hover:text-red-400 flex items-center justify-between text-base">
+              Add New Movie
+              <span>+</span>
+            </div>
+            <p class="text-xs text-gray-400">Create a new movie record in the live database.</p>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: USERS MANAGEMENT -->
+    <div *ngIf="activeTab === 'users'" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <input
+          type="text"
+          [(ngModel)]="userSearchTerm"
+          placeholder="Search by name, email, or role..."
+          class="w-full sm:w-80 rounded-xl border border-white/10 bg-[#14141e] px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:border-red-500 focus:outline-none transition"
+        />
+        <div class="text-xs text-gray-400">Total Found: {{ users.length }} Users</div>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl border border-white/10 bg-[#14141e] shadow-xl">
+        <table class="w-full text-left text-sm text-gray-300">
+          <thead class="bg-[#1a1a28] text-xs font-bold uppercase text-gray-400 border-b border-white/10">
+            <tr>
+              <th class="px-6 py-4">User Info</th>
+              <th class="px-6 py-4">Role</th>
+              <th class="px-6 py-4">Status</th>
+              <th class="px-6 py-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            <tr *ngFor="let u of users" class="hover:bg-white/[0.02] transition">
+              <td class="px-6 py-4 flex items-center gap-3">
+                <div class="h-10 w-10 rounded-full border border-white/10 bg-red-950/40 flex items-center justify-center text-xs font-bold text-red-400 overflow-hidden shrink-0">
+                  <img *ngIf="u.image" [src]="u.image" [alt]="u.name" class="h-full w-full object-cover" />
+                  <span *ngIf="!u.image">US</span>
+                </div>
+                <div>
+                  <div class="font-semibold text-white">{{ u.name }}</div>
+                  <div class="text-xs text-gray-400">{{ u.email }}</div>
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <span
+                  class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
+                  [ngClass]="u.role === 'admin' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'"
+                >
+                  {{ u.role }}
+                </span>
+              </td>
+              <td class="px-6 py-4">
+                <button
+                  (click)="toggleUserStatus(u)"
+                  class="px-3 py-1 rounded-full text-xs font-semibold transition"
+                  [ngClass]="u.isActive !== false ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30' : 'bg-gray-500/20 text-gray-400 border border-gray-500/30 hover:bg-gray-500/30'"
+                >
+                  {{ u.isActive !== false ? 'Active' : 'Disabled' }}
+                </button>
+              </td>
+              <td class="px-6 py-4 text-right space-x-2">
+                <button (click)="openUserDetail(u)" class="px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-xs text-gray-300 hover:bg-white/10 hover:text-white transition">Details</button>
+                <button (click)="promptDeleteUser(u)" class="px-3 py-1.5 rounded-lg border border-red-500/30 bg-red-500/10 text-xs text-red-400 hover:bg-red-500 hover:text-white transition">Delete</button>
+              </td>
+            </tr>
+            <tr *ngIf="users.length === 0">
+              <td colspan="4" class="px-6 py-12 text-center text-gray-500">No users found in database.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 3: MOVIES MANAGEMENT -->
+    <div *ngIf="activeTab === 'movies'" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <input
+          type="text"
+          [(ngModel)]="movieSearchTerm"
+          placeholder="Search movie title or genre..."
+          class="w-full sm:w-80 rounded-xl border border-white/10 bg-[#14141e] px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:border-red-500 focus:outline-none transition"
+        />
+        <button (click)="openAddMovieModal()" class="px-5 py-2.5 rounded-xl bg-red-600 font-semibold text-white hover:bg-red-500 transition flex items-center gap-2 shadow-lg shadow-red-600/30">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Add New Movie
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div *ngFor="let m of movies" class="rounded-2xl border border-white/10 bg-[#14141e] overflow-hidden flex flex-col justify-between shadow-xl hover:border-white/20 transition">
+          <div>
+            <div class="relative h-64 overflow-hidden">
+              <img [src]="m.poster" [alt]="m.title" class="w-full h-full object-cover" />
+              <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/80 backdrop-blur text-amber-400 text-xs font-bold">
+                ★ {{ m.rating }}
+              </div>
+            </div>
+            <div class="p-4 space-y-2">
+              <h3 class="font-bold text-white text-base truncate">{{ m.title }}</h3>
+              <p class="text-xs text-gray-400 line-clamp-2">{{ m.overview }}</p>
+              <div class="flex flex-wrap gap-1 mt-2">
+                <span *ngFor="let g of m.genres" class="px-2 py-0.5 rounded bg-white/5 text-[10px] text-gray-300 border border-white/10">{{ g }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-4 border-t border-white/10 flex items-center justify-between gap-2 bg-[#0f0f17]">
+            <button (click)="openEditMovieModal(m)" class="w-full py-1.5 rounded-lg border border-white/10 bg-white/5 text-xs text-gray-300 hover:bg-white/10 hover:text-white transition">Edit</button>
+            <button (click)="promptDeleteMovie(m)" class="w-full py-1.5 rounded-lg border border-red-500/30 bg-red-500/10 text-xs text-red-400 hover:bg-red-500 hover:text-white transition">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: ADD / EDIT MOVIE -->
+    <div *ngIf="showMovieFormModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+      <div class="w-full max-w-lg rounded-2xl border border-white/10 bg-[#14141e] p-6 space-y-6 shadow-2xl">
+        <h3 class="text-xl font-bold text-white border-b border-white/10 pb-3">{{ isEditMode ? 'Edit Movie' : 'Add New Movie' }}</h3>
+        
+        <form (ngSubmit)="saveMovie()" class="space-y-4 text-sm">
+          <div>
+            <label class="block text-gray-400 mb-1">Title *</label>
+            <input type="text" [(ngModel)]="movieForm.title" name="title" required class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-2 text-white focus:border-red-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-gray-400 mb-1">Poster Image URL *</label>
+            <input type="text" [(ngModel)]="movieForm.poster" name="poster" required class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-2 text-white focus:border-red-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-gray-400 mb-1">Backdrop Image URL</label>
+            <input type="text" [(ngModel)]="movieForm.backdrop" name="backdrop" class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-2 text-white focus:border-red-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-gray-400 mb-1">Genres (comma separated)</label>
+            <input type="text" [(ngModel)]="movieForm.genresInput" name="genresInput" placeholder="Action, Sci-Fi, Drama" class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-2 text-white focus:border-red-500 focus:outline-none" />
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-gray-400 mb-1">Release Year</label>
+              <input type="number" [(ngModel)]="movieForm.releaseYear" name="releaseYear" class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-2 text-white focus:border-red-500 focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-gray-400 mb-1">Rating (1-10)</label>
+              <input type="number" step="0.1" [(ngModel)]="movieForm.rating" name="rating" class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-2 text-white focus:border-red-500 focus:outline-none" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-gray-400 mb-1">Overview *</label>
+            <textarea [(ngModel)]="movieForm.overview" name="overview" rows="3" required class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-2 text-white focus:border-red-500 focus:outline-none"></textarea>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
+            <button type="button" (click)="showMovieFormModal = false" class="px-5 py-2 rounded-xl border border-white/10 text-gray-300 hover:bg-white/5">Cancel</button>
+            <button type="submit" class="px-6 py-2 rounded-xl bg-red-600 font-semibold text-white hover:bg-red-500">Save Movie</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL: DELETE CONFIRMATION -->
+    <div *ngIf="showDeleteMovieModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+      <div class="w-full max-w-md rounded-2xl border border-white/10 bg-[#14141e] p-6 space-y-6 shadow-2xl text-center">
+        <h3 class="text-lg font-bold text-white">Delete Movie?</h3>
+        <p class="text-sm text-gray-400">Are you sure you want to delete <span class="text-white font-semibold">{{ movieToDelete?.title }}</span>? This operation cannot be undone.</p>
+        <div class="flex items-center justify-center gap-3">
+          <button (click)="showDeleteMovieModal = false" class="px-5 py-2 rounded-xl border border-white/10 text-gray-300 hover:bg-white/5">Cancel</button>
+          <button (click)="deleteMovie()" class="px-6 py-2 rounded-xl bg-red-600 font-semibold text-white hover:bg-red-500">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: USER DETAILS -->
+    <div *ngIf="showUserDetailModal && selectedUser" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+      <div class="w-full max-w-md rounded-2xl border border-white/10 bg-[#14141e] p-6 space-y-6 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-white/10 pb-4">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <span class="h-2.5 w-2.5 rounded-full bg-blue-500"></span>
+            User Account Details
+          </h3>
+          <button (click)="showUserDetailModal = false" class="text-gray-400 hover:text-white text-lg">✕</button>
+        </div>
+
+        <div class="flex items-center gap-4 p-4 rounded-xl bg-[#0f0f17] border border-white/5">
+          <div class="h-14 w-14 rounded-full border-2 border-white/10 bg-red-950/40 flex items-center justify-center text-sm font-bold text-red-400 overflow-hidden shrink-0">
+            <img *ngIf="selectedUser.image" [src]="selectedUser.image" [alt]="selectedUser.name" class="h-full w-full object-cover" />
+            <span *ngIf="!selectedUser.image">US</span>
+          </div>
+          <div>
+            <h4 class="font-bold text-white text-base">{{ selectedUser.name }}</h4>
+            <p class="text-xs text-gray-400">{{ selectedUser.email }}</p>
+            <span
+              class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
+              [ngClass]="selectedUser.role === 'admin' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'"
+            >
+              {{ selectedUser.role }}
+            </span>
+          </div>
+        </div>
+
+        <div class="space-y-3 text-sm">
+          <div class="flex items-center justify-between p-3 rounded-xl bg-[#0f0f17] border border-white/5">
+            <span class="text-gray-400">Account ID</span>
+            <span class="font-mono text-xs text-gray-300">{{ selectedUser._id }}</span>
+          </div>
+
+          <div class="flex items-center justify-between p-3 rounded-xl bg-[#0f0f17] border border-white/5">
+            <span class="text-gray-400">Current Status</span>
+            <button
+              (click)="toggleUserStatus(selectedUser)"
+              class="px-3 py-1 rounded-full text-xs font-semibold transition"
+              [ngClass]="selectedUser.isActive !== false ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30' : 'bg-gray-500/20 text-gray-400 border border-gray-500/30 hover:bg-gray-500/30'"
+            >
+              {{ selectedUser.isActive !== false ? 'Active 🟢' : 'Disabled 🔴' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
+          <button (click)="showUserDetailModal = false" class="w-full py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-white hover:bg-white/10 transition">Close</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,3 +1,251 @@
-<div class="min-h-[70vh] flex items-center justify-center bg-[#0f0f13] text-white">
-  <h1 class="text-3xl font-bold">Profile Component</h1>
+<div class="min-h-screen bg-[#0d0d12] text-gray-100 p-4 sm:p-6 lg:p-10 font-sans">
+  <div class="max-w-[1200px] mx-auto space-y-8">
+
+    <!-- Top User Profile Hero Header -->
+    <div class="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-red-950/30 via-[#14141e] to-[#0f0f17] p-6 sm:p-8 shadow-2xl">
+      <div class="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-red-600/10 blur-3xl pointer-events-none"></div>
+
+      <div class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 relative z-10 text-center sm:text-left">
+        <div class="flex flex-col sm:flex-row items-center gap-6">
+          <div class="relative group">
+            <div class="h-24 w-24 sm:h-28 sm:w-28 rounded-full border-4 border-red-600/40 bg-red-950 overflow-hidden shadow-2xl">
+              <img [src]="authService.currentUser()?.image || user?.image || defaultAvatar" [alt]="user?.name || 'User'" class="h-full w-full object-cover" />
+            </div>
+            <button (click)="activeTab = 'avatar'" class="absolute bottom-0 right-0 p-2 rounded-full bg-red-600 text-white shadow-lg hover:bg-red-500 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex items-center justify-center sm:justify-start gap-2">
+              <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight">{{ user?.name || 'User Profile' }}</h1>
+              <span
+                class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider"
+                [ngClass]="user?.role === 'admin' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'"
+              >
+                {{ user?.role || 'User' }}
+              </span>
+            </div>
+            <p class="text-gray-400 text-sm font-medium">{{ user?.email }}</p>
+            <p class="text-xs text-gray-500">Member since MovieHub 2026</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button (click)="logout()" class="px-5 py-2.5 rounded-xl border border-red-500/30 bg-red-500/10 text-sm font-semibold text-red-400 hover:bg-red-600 hover:text-white transition shadow-lg">
+            Sign Out / Logout
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="border-b border-white/10 flex flex-wrap items-center gap-6 sm:gap-8 text-sm font-semibold">
+      <button
+        (click)="activeTab = 'info'"
+        class="pb-4 transition relative flex items-center gap-2"
+        [ngClass]="activeTab === 'info' ? 'text-white border-b-2 border-red-600' : 'text-gray-400 hover:text-white'"
+      >
+        Personal Info
+      </button>
+
+      <button
+        (click)="activeTab = 'avatar'"
+        class="pb-4 transition relative flex items-center gap-2"
+        [ngClass]="activeTab === 'avatar' ? 'text-white border-b-2 border-red-600' : 'text-gray-400 hover:text-white'"
+      >
+        Profile Picture
+      </button>
+
+      <button
+        (click)="activeTab = 'password'"
+        class="pb-4 transition relative flex items-center gap-2"
+        [ngClass]="activeTab === 'password' ? 'text-white border-b-2 border-red-600' : 'text-gray-400 hover:text-white'"
+      >
+        Change Password
+      </button>
+
+      <button
+        (click)="activeTab = 'favorites'"
+        class="pb-4 transition relative flex items-center gap-2"
+        [ngClass]="activeTab === 'favorites' ? 'text-white border-b-2 border-red-600' : 'text-gray-400 hover:text-white'"
+      >
+        My Favorites
+        <span class="ml-1 rounded-full bg-white/10 px-2 py-0.5 text-xs font-bold text-gray-300">{{ favoriteMovies.length }}</span>
+      </button>
+
+      <button
+        (click)="activeTab = 'danger'"
+        class="pb-4 transition relative flex items-center gap-2"
+        [ngClass]="activeTab === 'danger' ? 'text-red-400 border-b-2 border-red-600' : 'text-gray-400 hover:text-red-400'"
+      >
+        Delete Account
+      </button>
+    </div>
+
+    <!-- TAB 1: PERSONAL INFO -->
+    <div *ngIf="activeTab === 'info'" class="max-w-2xl rounded-3xl border border-white/10 bg-[#14141e] p-6 sm:p-8 space-y-6 shadow-xl">
+      <h3 class="text-xl font-bold text-white border-b border-white/10 pb-3">Update Personal Details</h3>
+
+      <div *ngIf="profileSuccessMsg" class="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-sm">
+        ✓ {{ profileSuccessMsg }}
+      </div>
+      <div *ngIf="profileErrorMsg" class="p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm">
+        ⚠️ {{ profileErrorMsg }}
+      </div>
+
+      <form (ngSubmit)="onUpdateProfile()" class="space-y-4 text-sm">
+        <div>
+          <label class="block text-gray-400 mb-1.5 font-medium">Full Name</label>
+          <input type="text" [(ngModel)]="nameInput" name="name" required class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-3 text-white focus:border-red-500 focus:outline-none transition" />
+        </div>
+
+        <div>
+          <label class="block text-gray-400 mb-1.5 font-medium">Email Address</label>
+          <input type="email" [(ngModel)]="emailInput" name="email" required class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-3 text-white focus:border-red-500 focus:outline-none transition" />
+        </div>
+
+        <button type="submit" [disabled]="isUpdatingProfile" class="w-full py-3 rounded-xl bg-red-600 font-semibold text-white hover:bg-red-500 transition shadow-lg shadow-red-600/30 disabled:opacity-50">
+          {{ isUpdatingProfile ? 'Saving Changes...' : 'Save Profile Details' }}
+        </button>
+      </form>
+    </div>
+
+    <!-- TAB 2: PROFILE PICTURE -->
+    <div *ngIf="activeTab === 'avatar'" class="max-w-2xl rounded-3xl border border-white/10 bg-[#14141e] p-6 sm:p-8 space-y-6 shadow-xl">
+      <h3 class="text-xl font-bold text-white border-b border-white/10 pb-3">Update Profile Picture</h3>
+
+      <div *ngIf="avatarSuccessMsg" class="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-sm">
+        ✓ {{ avatarSuccessMsg }}
+      </div>
+      <div *ngIf="avatarErrorMsg" class="p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm">
+        ⚠️ {{ avatarErrorMsg }}
+      </div>
+
+      <div class="flex items-center gap-6 p-4 rounded-2xl bg-[#0f0f17] border border-white/5">
+        <div class="h-20 w-20 rounded-full border-2 border-red-600/40 bg-red-950 overflow-hidden shrink-0">
+          <img [src]="imageUrlInput || user?.image || defaultAvatar" [alt]="user?.name || 'Preview'" class="h-full w-full object-cover" />
+        </div>
+        <div>
+          <h4 class="font-bold text-white text-sm">Avatar Preview</h4>
+          <p class="text-xs text-gray-400">Enter a direct image URL (PNG, JPG, WebP) below to update your picture.</p>
+        </div>
+      </div>
+
+      <form (ngSubmit)="onUpdateImage()" class="space-y-4 text-sm">
+        <div>
+          <label class="block text-gray-400 mb-1.5 font-medium">Image URL</label>
+          <input type="text" [(ngModel)]="imageUrlInput" name="imageUrl" placeholder="https://example.com/my-photo.jpg" class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-3 text-white focus:border-red-500 focus:outline-none transition" />
+        </div>
+
+        <button type="submit" [disabled]="isUpdatingAvatar" class="w-full py-3 rounded-xl bg-red-600 font-semibold text-white hover:bg-red-500 transition shadow-lg shadow-red-600/30 disabled:opacity-50">
+          {{ isUpdatingAvatar ? 'Updating Picture...' : 'Update Picture' }}
+        </button>
+      </form>
+    </div>
+
+    <!-- TAB 3: CHANGE PASSWORD -->
+    <div *ngIf="activeTab === 'password'" class="max-w-2xl rounded-3xl border border-white/10 bg-[#14141e] p-6 sm:p-8 space-y-6 shadow-xl">
+      <h3 class="text-xl font-bold text-white border-b border-white/10 pb-3">Change Account Password</h3>
+
+      <div *ngIf="passwordSuccessMsg" class="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-sm">
+        ✓ {{ passwordSuccessMsg }}
+      </div>
+      <div *ngIf="passwordErrorMsg" class="p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 text-sm">
+        ⚠️ {{ passwordErrorMsg }}
+      </div>
+
+      <form (ngSubmit)="onChangePassword()" class="space-y-4 text-sm">
+        <div>
+          <label class="block text-gray-400 mb-1.5 font-medium">Current Password</label>
+          <input type="password" [(ngModel)]="currentPassword" name="currentPassword" required class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-3 text-white focus:border-red-500 focus:outline-none transition" />
+        </div>
+
+        <div>
+          <label class="block text-gray-400 mb-1.5 font-medium">New Password</label>
+          <input type="password" [(ngModel)]="newPassword" name="newPassword" required class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-3 text-white focus:border-red-500 focus:outline-none transition" />
+        </div>
+
+        <div>
+          <label class="block text-gray-400 mb-1.5 font-medium">Confirm New Password</label>
+          <input type="password" [(ngModel)]="confirmNewPassword" name="confirmNewPassword" required class="w-full rounded-xl border border-white/10 bg-[#0f0f17] px-4 py-3 text-white focus:border-red-500 focus:outline-none transition" />
+        </div>
+
+        <button type="submit" [disabled]="isChangingPassword" class="w-full py-3 rounded-xl bg-red-600 font-semibold text-white hover:bg-red-500 transition shadow-lg shadow-red-600/30 disabled:opacity-50">
+          {{ isChangingPassword ? 'Updating Password...' : 'Change Password' }}
+        </button>
+      </form>
+    </div>
+
+    <!-- TAB 4: MY FAVORITES -->
+    <div *ngIf="activeTab === 'favorites'" class="space-y-6">
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <h3 class="text-xl font-bold text-white">My Favorite Movies catalog</h3>
+        <span class="text-xs font-semibold text-gray-400">{{ favoriteMovies.length }} Saved</span>
+      </div>
+
+      <div *ngIf="favoriteMovies.length === 0" class="py-16 text-center text-gray-400 space-y-3">
+        <p class="text-base font-semibold">No favorite movies saved yet.</p>
+        <p class="text-xs text-gray-500">Explore movies catalog and click the heart icon to save your favorites!</p>
+      </div>
+
+      <div *ngIf="favoriteMovies.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div *ngFor="let m of favoriteMovies" class="rounded-2xl border border-white/10 bg-[#14141e] overflow-hidden flex flex-col justify-between shadow-xl">
+          <div>
+            <div class="relative h-64 overflow-hidden">
+              <img [src]="m.poster" [alt]="m.title" class="w-full h-full object-cover" />
+              <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/80 backdrop-blur text-amber-400 text-xs font-bold">
+                ★ {{ m.rating }}
+              </div>
+            </div>
+            <div class="p-4 space-y-1">
+              <h4 class="font-bold text-white text-base truncate">{{ m.title }}</h4>
+              <p class="text-xs text-gray-400">{{ m.releaseYear }} • {{ m.genres?.join(', ') }}</p>
+            </div>
+          </div>
+
+          <div class="p-4 border-t border-white/10 bg-[#0f0f17]">
+            <button (click)="removeFavorite(m._id)" class="w-full py-2 rounded-xl border border-red-500/30 bg-red-500/10 text-xs font-semibold text-red-400 hover:bg-red-600 hover:text-white transition">
+              Remove Favorite
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: DELETE ACCOUNT -->
+    <div *ngIf="activeTab === 'danger'" class="max-w-2xl rounded-3xl border border-red-500/30 bg-red-950/10 p-6 sm:p-8 space-y-6 shadow-xl">
+      <h3 class="text-xl font-bold text-red-400 border-b border-red-500/20 pb-3">Delete Account</h3>
+      <p class="text-sm text-gray-300">
+        Deleting your account will permanently wipe your profile and information from MovieHub. This action cannot be reversed.
+      </p>
+
+      <button (click)="showDeleteModal = true" class="px-6 py-3 rounded-xl bg-red-600 font-semibold text-white hover:bg-red-500 transition shadow-lg shadow-red-600/30">
+        Delete Account
+      </button>
+    </div>
+
+    <!-- MODAL: DELETE ACCOUNT CONFIRMATION -->
+    <div *ngIf="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+      <div class="w-full max-w-md rounded-2xl border border-white/10 bg-[#14141e] p-6 space-y-6 shadow-2xl text-center">
+        <h3 class="text-lg font-bold text-white">Permanently Delete Account?</h3>
+        <p class="text-sm text-gray-400">Are you sure you want to delete your profile? This operation cannot be undone.</p>
+        
+        <div *ngIf="deleteErrorMsg" class="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-xs text-red-400">
+          {{ deleteErrorMsg }}
+        </div>
+
+        <div class="flex items-center justify-center gap-3">
+          <button (click)="showDeleteModal = false" class="px-5 py-2 rounded-xl border border-white/10 text-gray-300 hover:bg-white/5">Cancel</button>
+          <button (click)="onDeleteAccount()" [disabled]="isDeletingAccount" class="px-6 py-2 rounded-xl bg-red-600 font-semibold text-white hover:bg-red-500 disabled:opacity-50">
+            {{ isDeletingAccount ? 'Deleting...' : 'Yes, Delete My Account' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>

@@ -25,8 +25,7 @@ const getAllMovies = catchAsync(async (req, res, next) => {
         .sort()
         .pagination();
 
-    const movies = await features.query
-        .populate("createdBy", "name -_id");
+    const movies = await features.query;
 
     res.status(200).json({
         status: "success",

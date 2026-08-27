@@ -3,11 +3,17 @@ export interface User {
   name: string;
   email: string;
   role: 'user' | 'admin';
+  isActive?: boolean;
   image?: string | null;
-  favorites?: string[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-export type CurrentUser = User;
+export interface CurrentUser extends User {}
+
+export interface AdminUser extends User {
+  role: 'admin';
+}
 
 export interface LoginRequest {
   email: string;
@@ -21,16 +27,18 @@ export interface RegisterRequest {
 }
 
 export interface AuthResponse {
-  status: string;
-  token: string;
-  data: {
+  success: boolean;
+  token?: string;
+  data?: {
     user: User;
+    token?: string;
   };
+  message?: string;
 }
 
 export interface UserResponse {
-  status: string;
-  data: {
-    user: User;
-  };
+  success: boolean;
+  data?: User;
+  users?: User[];
+  message?: string;
 }

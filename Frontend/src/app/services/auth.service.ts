@@ -16,7 +16,7 @@ export class AuthService {
   private readonly TOKEN_KEY = 'moviehub_token';
 
   token = signal<string | null>(this.getStoredToken());
-  currentUser = signal<User | null>(null);
+  currentUser = signal<User | null>(this.getStoredUser());
 
   isLoggedIn = computed(() => !!this.token() && !!this.currentUser());
   userRole = computed(() => this.currentUser()?.role || null);
@@ -27,13 +27,23 @@ export class AuthService {
   constructor() {
     if (this.token()) {
       this.fetchCurrentUser().subscribe({
-        error: () => this.clearSession()
+        error: () => {}
       });
     }
   }
 
   private getStoredToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  private getStoredUser(): User | null {
+    const data = localStorage.getItem('moviehub_user');
+    if (!data) return null;
+    try {
+      return JSON.parse(data);
+    } catch {
+      return null;
+    }
   }
 
   getToken(): string | null {
@@ -53,15 +63,7 @@ export class AuthService {
   }
 
   register(data: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.API_URL}/signup`, data).pipe(
-      tap((res: any) => {
-        const token = res.token;
-        const user = res.data?.user || res.data;
-        if (token && user) {
-          this.setSession(token, user);
-        }
-      })
-    );
+    return this.http.post<AuthResponse>(`${this.API_URL}/signup`, data);
   }
 
   signup(name: string, email: string, password: string): Observable<AuthResponse> {
@@ -81,14 +83,22 @@ export class AuthService {
       tap((res: any) => {
         const user = res.data?.user || res.data;
         if (user) {
+          localStorage.setItem('moviehub_user', JSON.stringify(user));
           this.currentUser.set(user);
         }
       }),
       catchError((err) => {
-        this.clearSession();
+        if (err.status === 401 || err.status === 403) {
+          this.clearSession();
+        }
         return throwError(() => err);
       })
     );
+  }
+
+  updateCurrentUser(user: User): void {
+    localStorage.setItem('moviehub_user', JSON.stringify(user));
+    this.currentUser.set({ ...user });
   }
 
   logout(): void {
@@ -98,12 +108,14 @@ export class AuthService {
 
   private setSession(token: string, user: User): void {
     localStorage.setItem(this.TOKEN_KEY, token);
+    localStorage.setItem('moviehub_user', JSON.stringify(user));
     this.token.set(token);
     this.currentUser.set(user);
   }
 
   private clearSession(): void {
     localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem('moviehub_user');
     this.token.set(null);
     this.currentUser.set(null);
   }
