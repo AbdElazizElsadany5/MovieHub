@@ -105,7 +105,7 @@ export class AuthService {
   loginWithGoogle(): void {
     const backendUrl = environment.apiUrl.startsWith('http') 
       ? environment.apiUrl 
-      : 'http://localhost:3000/api';
+      : `${window.location.origin}/api`;
     window.location.href = `${backendUrl}/auth/google`;
   }
 
