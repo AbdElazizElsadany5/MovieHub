@@ -10,7 +10,7 @@
       "use": "@vercel/static-build",
       "config": {
         "installCommand": "npm install --legacy-peer-deps",
-        "distDir": "Frontend/dist/moviehub/browser"
+        "distDir": "dist/moviehub"
       }
     }
   ],

@@ -8,7 +8,7 @@ const addMovie = catchAsync(async (req, res, next) => {
         ...req.body,
         createdBy: req.user._id
     });
-    
+
     res.status(201).json({
         status: "success",
         data: {
@@ -26,7 +26,7 @@ const getAllMovies = catchAsync(async (req, res, next) => {
         .sort()
         .pagination();
 
-     const movies = await features.query.populate("createdBy", "name -_id");
+    const movies = await features.query.populate("createdBy", "name -_id");
 
 
     res.status(200).json({
@@ -42,10 +42,10 @@ const getAllMovies = catchAsync(async (req, res, next) => {
 const getMovie = catchAsync(async (req, res, next) => {
 
     const movie = await Movie.findById(req.params.id).populate("createdBy", "name -_id");
- 
-        if (!movie) {
-    return next(new AppError(404, "Movie not found"));
-}
+
+    if (!movie) {
+        return next(new AppError(404, "Movie not found"));
+    }
 
     res.status(200).json({
         status: "success",
