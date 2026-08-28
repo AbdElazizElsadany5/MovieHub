@@ -1,5 +1,10 @@
 {
   "outputDirectory": "Frontend/dist/moviehub/browser",
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "Backend/**"
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
