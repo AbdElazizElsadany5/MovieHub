@@ -123,9 +123,9 @@ exports.googleCallback = catchAsync(async (req, res, next) => {
       }
     );
 
-    // Return to Angular
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:4200";
     res.redirect(
-      `http://localhost:4200/google-success?token=${token}`
+      `${frontendUrl}/google-success?token=${token}`
     );
 
   } catch (error) {
