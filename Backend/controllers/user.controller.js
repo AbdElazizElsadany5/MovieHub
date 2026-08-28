@@ -106,7 +106,8 @@ exports.getUserById = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteUserByAdmin = catchAsync(async (req, res, next) => {
-    if (req.user._id.toString() === req.params.id.toString()) {
+    const currentAdminId = req.user?._id ? req.user._id.toString() : (req.user?.id ? req.user.id.toString() : "");
+    if (currentAdminId && currentAdminId === req.params.id.toString()) {
         return next(new AppError(400, "You cannot delete your own admin account!"));
     }
     const user = await User.findByIdAndDelete(req.params.id);

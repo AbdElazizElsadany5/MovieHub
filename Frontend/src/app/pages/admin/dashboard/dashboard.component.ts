@@ -210,7 +210,8 @@ export class DashboardComponent implements OnInit {
   }
 
   promptDeleteUser(user: any): void {
-    const currentAdminId = this.authService.currentUser()?._id;
+    const currentUser = this.authService.currentUser();
+    const currentAdminId = currentUser?._id || (currentUser as any)?.id;
     if (user._id === currentAdminId) {
       this.showToast('You cannot delete your own active admin account!', true);
       return;
@@ -223,17 +224,19 @@ export class DashboardComponent implements OnInit {
     if (!this.userToDelete) return;
     const targetId = this.userToDelete._id;
 
-    // Instantly remove user from list and close modal
-    this.users = this.users.filter((u) => u._id !== targetId);
-    this.showDeleteUserModal = false;
-    this.showToast('User deleted successfully.');
-
     this.userService.deleteUserByAdmin(targetId).subscribe({
       next: () => {
+        this.users = this.users.filter((u) => u._id !== targetId);
+        this.showDeleteUserModal = false;
         this.userToDelete = null;
+        this.showToast('User deleted successfully.');
+        this.cdr.detectChanges();
       },
-      error: () => {
+      error: (err) => {
+        this.showDeleteUserModal = false;
         this.userToDelete = null;
+        this.showToast(err.error?.message || 'Failed to delete user.', true);
+        this.loadUsers();
       }
     });
   }
