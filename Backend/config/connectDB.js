@@ -11,7 +11,7 @@ const connectDB = async () => {
   }
 
   if (!cached.promise) {
-    const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/moviehub';
+    const mongoUri = process.env.MONGO_URI || 'mongodb+srv://zizoelsadany7_db_user:ZIZO1234@nti.hqjwjib.mongodb.net/MovieHub?retryWrites=true&w=majority';
     const opts = {
       serverSelectionTimeoutMS: 5000
     };
