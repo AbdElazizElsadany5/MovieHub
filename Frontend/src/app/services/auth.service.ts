@@ -102,12 +102,25 @@ export class AuthService {
     this.currentUser.set({ ...user });
   }
 
+  loginWithGoogle(): void {
+    const backendUrl = environment.apiUrl.startsWith('http') 
+      ? environment.apiUrl 
+      : 'http://localhost:3000/api';
+    window.location.href = `${backendUrl}/auth/google`;
+  }
+
+  handleGoogleCallbackToken(token: string): Observable<UserResponse> {
+    localStorage.setItem(this.TOKEN_KEY, token);
+    this.token.set(token);
+    return this.fetchCurrentUser();
+  }
+
   logout(): void {
     this.clearSession();
     this.router.navigate(['/login']);
   }
 
-  private setSession(token: string, user: User): void {
+  setSession(token: string, user: User): void {
     localStorage.setItem(this.TOKEN_KEY, token);
     localStorage.setItem('moviehub_user', JSON.stringify(user));
     this.token.set(token);

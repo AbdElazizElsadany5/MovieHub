@@ -28,6 +28,10 @@ export class LoginComponent {
     return this.loginForm.controls;
   }
 
+  loginWithGoogle(): void {
+    this.authService.loginWithGoogle();
+  }
+
   onSubmit(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();

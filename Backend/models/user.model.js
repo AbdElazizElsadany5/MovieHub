@@ -13,7 +13,7 @@ const userschema =mongoose.Schema({
     },
     password:{
         type:String,
-        required:[true,"Password is Required"],
+        required:[function() { return !this.googleId; },"Password is Required"],
         trim:true,
     },
     role:{
@@ -23,7 +23,7 @@ const userschema =mongoose.Schema({
     },
     confirmPassword:{
         type:String,
-        required:[true,"Confirm Password is Required"],
+        required:[function() { return !this.googleId; },"Confirm Password is Required"],
         trim:true,
     },
     isActive:{
@@ -38,6 +38,14 @@ const userschema =mongoose.Schema({
         type:Date,
         default:Date.now(),
     },
+    googleId: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
+  googleAccessToken: {
+    type: String
+  },
     image: {
     type: String,
     default: null

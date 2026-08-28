@@ -10,11 +10,14 @@ import { DashboardComponent } from './pages/admin/dashboard/dashboard.component'
 import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
 
+import { GoogleSuccessComponent } from './pages/google-success/google-success.component';
+
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'google-success', component: GoogleSuccessComponent },
   { path: 'movies', component: MoviesComponent },
   { path: 'movies/:id', component: MovieDetailsComponent },
   { path: 'movie/:id', component: MovieDetailsComponent },

@@ -48,6 +48,10 @@ export class RegisterComponent {
     this.showConfirmPassword.update(v => !v);
   }
 
+  loginWithGoogle(): void {
+    this.authService.loginWithGoogle();
+  }
+
   onSubmit(): void {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
