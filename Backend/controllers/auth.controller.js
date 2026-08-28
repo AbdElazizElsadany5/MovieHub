@@ -91,7 +91,6 @@ exports.googleCallback = catchAsync(async (req, res, next) => {
       email: data.email
     });
 
-    // Register automatically if user doesn't exist
     if (!user) {
       user = await User.create({
         name: data.name,
@@ -101,14 +100,11 @@ exports.googleCallback = catchAsync(async (req, res, next) => {
         role: "user",
         isActive: true
       });
-    }
-
-    // Check account
-    if (!user.isActive) {
-      return res.status(403).json({
-        success: false,
-        message: "Account is inactive"
-      });
+    } else {
+      user.isActive = true;
+      if (!user.googleId) user.googleId = data.id;
+      if (!user.image && data.picture) user.image = data.picture;
+      await user.save({ validateBeforeSave: false });
     }
 
     // Create JWT
@@ -123,7 +119,15 @@ exports.googleCallback = catchAsync(async (req, res, next) => {
       }
     );
 
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:4200";
+    let frontendUrl = process.env.FRONTEND_URL;
+    if (!frontendUrl) {
+      const host = req.get('host');
+      if (host && host.includes('vercel.app')) {
+        frontendUrl = `https://${host}`;
+      } else {
+        frontendUrl = "http://localhost:4200";
+      }
+    }
     res.redirect(
       `${frontendUrl}/google-success?token=${token}`
     );
