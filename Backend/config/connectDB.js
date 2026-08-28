@@ -13,12 +13,15 @@ const connectDB = async () => {
   if (!cached.promise) {
     const mongoUri = process.env.MONGO_URI || 'mongodb+srv://zizoelsadany7_db_user:ZIZO1234@nti.hqjwjib.mongodb.net/MovieHub?retryWrites=true&w=majority';
     const opts = {
-      serverSelectionTimeoutMS: 5000
+      serverSelectionTimeoutMS: 15000
     };
 
     cached.promise = mongoose.connect(mongoUri, opts).then((mongooseInstance) => {
       console.log('✔ MongoDB Connected successfully');
       return mongooseInstance;
+    }).catch((err) => {
+      cached.promise = null;
+      throw err;
     });
   }
 

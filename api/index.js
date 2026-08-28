@@ -9,6 +9,10 @@ module.exports = async (req, res) => {
     await connectDB();
   } catch (err) {
     console.error('Serverless DB connection error:', err);
+    return res.status(500).json({
+      status: 'error',
+      message: 'Database connection error: ' + err.message
+    });
   }
   return app(req, res);
 };
