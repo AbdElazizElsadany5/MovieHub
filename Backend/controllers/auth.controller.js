@@ -73,8 +73,16 @@ exports.googleCallback = catchAsync(async (req, res, next) => {
       });
     }
 
+    const host = req.get('host');
+    const redirect_uri = process.env.GOOGLE_CALLBACK_URL || (host && host.includes('vercel.app')
+      ? `https://${host}/api/auth/google/callback`
+      : 'http://localhost:3000/api/auth/google/callback');
+
     // Get Google tokens
-    const { tokens } = await googleClient.getToken(code);
+    const { tokens } = await googleClient.getToken({
+      code,
+      redirect_uri
+    });
 
     googleClient.setCredentials(tokens);
 
